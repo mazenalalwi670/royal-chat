@@ -3,7 +3,13 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: ['localhost', 'api.dicebear.com'],
+    domains: ['localhost', 'api.dicebear.com', 'i.pravatar.cc', 'pravatar.cc'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
   },
   // This is needed for TypeScript path aliases to work
   typescript: {
@@ -13,7 +19,20 @@ const nextConfig = {
     // !! WARN !!
     ignoreBuildErrors: true,
   },
+  // Enable camera and microphone permissions
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=*, microphone=*',
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;
-
