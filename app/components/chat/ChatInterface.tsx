@@ -97,7 +97,6 @@ export function ChatInterface({
       }>;
     }) => {
       if (data.conversationId === conversation.id) {
-        console.log(`📨 Received ${data.messages.length} messages from conversation history`);
         // Load conversation history messages
         const historyMessages: MessageType[] = data.messages.map(msg => {
           // Convert reactions from server format to MessageType format
@@ -366,7 +365,8 @@ export function ChatInterface({
       <ScrollArea 
         className="flex-1 p-2 sm:p-4 min-h-0 overflow-y-auto touch-manipulation" 
         style={{ 
-          maxHeight: 'calc(100vh - 200px)',
+          maxHeight: 'calc(100dvh - 180px)',
+          height: 'calc(100dvh - 180px)',
           WebkitOverflowScrolling: 'touch',
           touchAction: 'pan-y pinch-zoom'
         }}

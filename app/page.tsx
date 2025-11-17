@@ -16,10 +16,8 @@ export default function Home() {
   useEffect(() => {
     setMounted(true);
     
-    // Force show login after 500ms if still loading
     const timeout = setTimeout(() => {
       if (userLoading) {
-        console.log('Timeout: Forcing login to show');
         setForceShowLogin(true);
       }
     }, 500);
@@ -40,7 +38,7 @@ export default function Home() {
           try {
             await login(phoneNumber);
           } catch (error) {
-            console.error('Login error:', error);
+            // Error handled silently
           }
         };
 

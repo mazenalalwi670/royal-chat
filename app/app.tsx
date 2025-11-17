@@ -1,13 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { Sidebar } from './components/Sidebar';
 import { ConversationsList } from './components/chat/ConversationsList';
 import { ChatInterface } from './components/chat/ChatInterface';
-import { SettingsPage } from './settings/SettingsPage';
-import { SelectConversationMessage } from './components/chat/SelectConversationMessage';
-import { ContactsPage } from './components/ContactsPage';
-import { PremiumChatPage } from './components/premium/PremiumChatPage';
+
+const SettingsPage = dynamic(() => import('./settings/SettingsPage').then(mod => ({ default: mod.SettingsPage })), { ssr: false });
+const SelectConversationMessage = dynamic(() => import('./components/chat/SelectConversationMessage').then(mod => ({ default: mod.SelectConversationMessage })), { ssr: false });
+const ContactsPage = dynamic(() => import('./components/ContactsPage').then(mod => ({ default: mod.ContactsPage })), { ssr: false });
+const PremiumChatPage = dynamic(() => import('./components/premium/PremiumChatPage').then(mod => ({ default: mod.PremiumChatPage })), { ssr: false });
 import { currentUser as initialUserRaw, mockConversations, mockMessages } from '../data/mockData';
 import { 
   Message, 
@@ -273,7 +275,7 @@ function App() {
   });
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden w-full max-w-full touch-pan-y">
+    <div className="flex h-[100dvh] bg-background overflow-hidden w-full max-w-full touch-pan-y">
       <Sidebar
         currentUser={{
           ...currentUser,

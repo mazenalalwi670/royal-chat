@@ -55,9 +55,7 @@ app.prepare().then(() => {
   const activeUsers = new Map();
   const roomUserData = new Map();
 
-  // WebSocket Connection handlers (from server/index.ts)
   io.on('connection', (socket) => {
-    console.log('A user connected via WebSocket');
 
     const socketActiveUsers = new Map();
     const socketRoomUserData = new Map();
@@ -94,7 +92,7 @@ app.prepare().then(() => {
         
         socketActiveUsers.set(socket.id, { userId, userName, socketId: socket.id, joinedAt: new Date() });
         
-        socket.to(conversationId).emit('user_joined', { 
+        io.to(conversationId).emit('user_joined', { 
           userId, 
           userName,
           userAvatar: userAvatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userId}`,
@@ -273,7 +271,6 @@ app.prepare().then(() => {
         });
         socketActiveUsers.delete(socket.id);
       }
-      console.log('User disconnected');
     });
   });
 
@@ -283,11 +280,10 @@ app.prepare().then(() => {
     handle(req, res, parsedUrl);
   });
 
-  // Start server
   server.listen(port, hostname, () => {
-    console.log(`> Ready on http://${hostname}:${port}`);
-    console.log(`> WebSocket server running on port ${port}`);
-    console.log(`> Next.js and WebSocket combined on single port`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`> Ready on http://${hostname}:${port}`);
+    }
   });
 });
 

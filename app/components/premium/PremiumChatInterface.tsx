@@ -481,8 +481,6 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
           return newMap;
         });
       }
-      
-      console.log(`User ${data.userName} joined with avatar: ${data.userAvatar}, frame: ${data.userFrame ? 'yes' : 'no'}`);
     };
     
     // Listen for conversation history (when joining, receive all previous messages)
@@ -1757,6 +1755,8 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
       <ScrollArea 
         className="flex-1 p-2 sm:p-4 relative z-10 w-full min-w-0 touch-pan-y"
         style={{
+          maxHeight: 'calc(100dvh - 280px)',
+          height: 'calc(100dvh - 280px)',
           WebkitOverflowScrolling: 'touch',
           touchAction: 'pan-y pinch-zoom'
         }}

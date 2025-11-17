@@ -55,12 +55,10 @@ export const WebSocketProvider = ({ children }: WebSocketProviderProps) => {
     });
 
     const onConnect = () => {
-      console.log('Connected to WebSocket server');
       setIsConnected(true);
     };
 
     const onDisconnect = () => {
-      console.log('Disconnected from WebSocket server');
       setIsConnected(false);
     };
 
