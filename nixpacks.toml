@@ -8,5 +8,5 @@ cmds = ["bun install"]
 cmds = ["bun run build"]
 
 [start]
-cmd = "bun run start"
+cmd = "node server-custom.mjs"
 
