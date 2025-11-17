@@ -1432,9 +1432,9 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
 
       {/* Header - Mobile responsive */}
       <Card className="border-b rounded-none premium-header animate-slide-in-down relative z-10 bg-background w-full touch-manipulation">
-        <div className="flex items-center justify-between p-2 sm:p-4 gap-2 flex-wrap">
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-            <div className="relative">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 sm:p-4 gap-3 sm:gap-2">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 w-full sm:w-auto">
+            <div className="relative flex-shrink-0">
               {/* Fancy Frame for Premium Chat Avatar */}
               <div
                 className={cn(
@@ -1448,7 +1448,7 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
                 }}
               />
               <Avatar className={cn(
-                "w-10 h-10 sm:w-12 sm:h-12 border-2 sm:border-4 border-background relative z-10 shadow-xl animate-fade-in-scale flex-shrink-0",
+                "w-12 h-12 sm:w-14 sm:h-14 border-2 sm:border-4 border-background relative z-10 shadow-xl animate-fade-in-scale flex-shrink-0",
                 isCurrentUserAdmin && "admin-avatar-jewel"
               )}>
                 <AvatarFallback 
@@ -1462,19 +1462,19 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
                   }}
                 >
                   {isCurrentUserAdmin ? (
-                    <Crown className="w-6 h-6 text-white animate-bounce-slow admin-crown-jewel" />
+                    <Crown className="w-6 h-6 sm:w-7 sm:h-7 text-white animate-bounce-slow admin-crown-jewel" />
                   ) : (
-                    <Crown className="w-6 h-6 text-white animate-bounce-slow" />
+                    <Crown className="w-6 h-6 sm:w-7 sm:h-7 text-white animate-bounce-slow" />
                   )}
                 </AvatarFallback>
               </Avatar>
               {isCurrentUserAdmin ? (
                 <Badge className="absolute -bottom-1 -right-1 bg-yellow-500 border-2 border-background z-20 shadow-lg animate-pulse admin-badge-jewel">
-                  <Crown className="w-3 h-3 text-white animate-bounce-slow" />
+                  <Crown className="w-3 h-3 sm:w-4 sm:h-4 text-white animate-bounce-slow" />
                 </Badge>
               ) : (
                 <Badge className="absolute -bottom-1 -right-1 bg-green-500 border-2 border-background z-20 shadow-lg animate-pulse">
-                  <Shield className="w-3 h-3" />
+                  <Shield className="w-3 h-3 sm:w-4 sm:h-4" />
                 </Badge>
               )}
               {isCurrentUserAdmin && (
@@ -1482,56 +1482,55 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
               )}
             </div>
             <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
-                <h2 className="font-bold text-sm sm:text-lg flex items-center gap-1 sm:gap-2 animate-gradient min-w-0 truncate" style={{ color: `hsl(var(--primary))` }}>
+              <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap mb-1">
+                <h2 className="font-bold text-base sm:text-lg md:text-xl flex items-center gap-1.5 sm:gap-2 animate-gradient min-w-0 truncate" style={{ color: `hsl(var(--primary))` }}>
                   {isCurrentUserAdmin ? (
                     <div className="relative flex-shrink-0">
-                      <Crown className="w-4 h-4 sm:w-6 sm:h-6 animate-bounce-slow admin-crown-jewel" style={{ color: `#ffd700` }} />
+                      <Crown className="w-5 h-5 sm:w-6 sm:h-6 animate-bounce-slow admin-crown-jewel" style={{ color: `#ffd700` }} />
                       <div className="absolute -inset-1 bg-yellow-400/30 rounded-full blur-md animate-pulse" />
                     </div>
                   ) : (
                     <Crown className="w-4 h-4 sm:w-5 sm:h-5 animate-bounce-slow flex-shrink-0" />
                   )}
-                  <span className="truncate">{dir === 'rtl' ? `الدردشة المميزة - ${isInvisible ? 'مخفي' : 'أونلاين'}` : `Premium Chat - ${isInvisible ? 'Invisible' : 'Online'}`}</span>
+                  <span className="truncate text-sm sm:text-base md:text-lg">{dir === 'rtl' ? `الدردشة المميزة` : `Premium Chat`}</span>
                 </h2>
                 {isCurrentUserAdmin && (
-                  <Badge variant="secondary" className="bg-yellow-500/20 text-yellow-600 border-yellow-500/30 animate-pulse admin-badge-jewel text-[10px] sm:text-xs px-1 sm:px-2">
+                  <Badge variant="secondary" className="bg-yellow-500/20 text-yellow-600 border-yellow-500/30 animate-pulse admin-badge-jewel text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 min-h-[20px]">
                     <Crown className="w-2.5 h-2.5 sm:w-3 sm:h-3 sm:mr-1 animate-bounce-slow" />
                     <span className="hidden sm:inline">{dir === 'rtl' ? 'مالك' : 'Owner'}</span>
                   </Badge>
                 )}
-                <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 animate-fade-in-scale text-[10px] sm:text-xs px-1 sm:px-2">
+                <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 animate-fade-in-scale text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 min-h-[20px]">
                   {dir === 'rtl' ? 'حصري' : 'Exclusive'}
                 </Badge>
-                {isVoiceChatActive && (
-                  <Badge variant="secondary" className="bg-green-500/10 text-green-600 border-green-500/20 animate-slide-in-up text-[10px] sm:text-xs px-1 sm:px-2">
-                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full animate-pulse sm:mr-1" />
-                    <span className="hidden sm:inline">{dir === 'rtl' ? 'صوتي نشط' : 'Voice Active'}</span>
-                  </Badge>
-                )}
-                {isInvisible && (
-                  <Badge variant="secondary" className="bg-gray-500/10 text-gray-600 border-gray-500/20 animate-pulse text-[10px] sm:text-xs px-1 sm:px-2">
-                    <EyeOff className="w-2.5 h-2.5 sm:w-3 sm:h-3 sm:mr-1" />
-                    <span className="hidden sm:inline">{dir === 'rtl' ? 'مخفي' : 'Invisible'}</span>
-                  </Badge>
-                )}
               </div>
-              <div className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
+              <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm text-muted-foreground flex-wrap">
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
                   onClick={() => setShowMembersList(!showMembersList)}
-                  className="h-auto p-0.5 sm:p-1 hover:bg-primary/10 text-xs sm:text-sm"
+                  className="h-8 sm:h-9 px-2 sm:px-3 hover:bg-primary/10 text-xs sm:text-sm min-h-[32px] touch-manipulation"
                 >
-                  <UsersRound className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-1" />
-                  <span className="hidden sm:inline">{members.length} {dir === 'rtl' ? 'مشترك' : 'members'}</span>
-                  <span className="sm:hidden">{members.length}</span>
+                  <UsersRound className="w-4 h-4 sm:w-5 sm:h-5 sm:mr-1.5" />
+                  <span>{members.length} {dir === 'rtl' ? 'مشترك' : 'members'}</span>
                 </Button>
+                {isVoiceChatActive && (
+                  <Badge variant="secondary" className="bg-green-500/10 text-green-600 border-green-500/20 animate-slide-in-up text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 min-h-[20px]">
+                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full animate-pulse sm:mr-1" />
+                    <span>{dir === 'rtl' ? 'صوتي نشط' : 'Voice'}</span>
+                  </Badge>
+                )}
+                {isInvisible && (
+                  <Badge variant="secondary" className="bg-gray-500/10 text-gray-600 border-gray-500/20 animate-pulse text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 min-h-[20px]">
+                    <EyeOff className="w-2.5 h-2.5 sm:w-3 sm:h-3 sm:mr-1" />
+                    <span>{dir === 'rtl' ? 'مخفي' : 'Hidden'}</span>
+                  </Badge>
+                )}
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
+          <div className="flex items-center gap-2 sm:gap-2 flex-wrap w-full sm:w-auto justify-end">
             {isCurrentUserAdmin && (
               <Button
                 type="button"
@@ -1539,20 +1538,20 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
                 variant={isInvisible ? 'secondary' : 'outline'}
                 onClick={toggleInvisibility}
                 className={cn(
-                  'rounded-full transition-all duration-300 hover:scale-110',
+                  'rounded-full transition-all duration-300 hover:scale-110 h-9 sm:h-10 px-3 sm:px-4 min-h-[36px] touch-manipulation',
                   isInvisible && 'bg-gray-500/20 border-gray-500/30 shadow-lg'
                 )}
                 title={isInvisible ? (dir === 'rtl' ? 'إظهار نفسك' : 'Show yourself') : (dir === 'rtl' ? 'إخفاء نفسك' : 'Hide yourself')}
               >
                 {isInvisible ? (
                   <>
-                    <EyeOff className="w-4 h-4 mr-2" />
-                    {dir === 'rtl' ? 'إظهار' : 'Show'}
+                    <EyeOff className="w-4 h-4 sm:mr-2" />
+                    <span className="hidden sm:inline">{dir === 'rtl' ? 'إظهار' : 'Show'}</span>
                   </>
                 ) : (
                   <>
-                    <Eye className="w-4 h-4 mr-2" />
-                    {dir === 'rtl' ? 'إخفاء' : 'Hide'}
+                    <Eye className="w-4 h-4 sm:mr-2" />
+                    <span className="hidden sm:inline">{dir === 'rtl' ? 'إخفاء' : 'Hide'}</span>
                   </>
                 )}
               </Button>
@@ -1568,15 +1567,15 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
               variant="outline"
               onClick={() => setShowSubscriptionOffers(true)}
               className={cn(
-                "rounded-full transition-all duration-300 hover:scale-110",
+                "rounded-full transition-all duration-300 hover:scale-110 h-9 sm:h-10 w-9 sm:w-10 min-h-[36px] min-w-[36px] touch-manipulation",
                 "border-yellow-500/30 hover:border-yellow-500 bg-gradient-to-r from-yellow-500/10 to-amber-500/10"
               )}
               title={dir === 'rtl' ? 'عروض الاشتراك' : 'Subscription Offers'}
             >
-              <Crown className="w-4 h-4 text-yellow-500" />
+              <Crown className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-500" />
             </Button>
             
-            <Badge variant="outline" className="border-primary text-primary animate-fade-in-scale">
+            <Badge variant="outline" className="border-primary text-primary animate-fade-in-scale text-[10px] sm:text-xs px-2 sm:px-3 py-1 min-h-[28px]">
               {dir === 'rtl' ? 'مدى الحياة' : 'Lifetime'}
             </Badge>
             <Button
@@ -1585,7 +1584,7 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
               variant={isVoiceChatActive ? 'default' : 'outline'}
               onClick={handleToggleVoiceChat}
               className={cn(
-                'rounded-full transition-all duration-300 hover:scale-110',
+                'rounded-full transition-all duration-300 hover:scale-110 h-9 sm:h-10 px-3 sm:px-4 min-h-[36px] touch-manipulation',
                 isVoiceChatActive && 'bg-primary hover:bg-primary/90 shadow-lg'
               )}
               style={
@@ -1596,17 +1595,9 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
                   : undefined
               }
             >
-              {isVoiceChatActive ? (
-                <>
-                  <Mic className="w-4 h-4 mr-2" />
-                  {dir === 'rtl' ? 'خروج' : 'Leave'}
-                </>
-              ) : (
-                <>
-                  <Mic className="w-4 h-4 mr-2" />
-                  {dir === 'rtl' ? 'دخول صوتي' : 'Join Voice'}
-                </>
-              )}
+              <Mic className="w-4 h-4 sm:w-5 sm:h-5 sm:mr-2" />
+              <span className="hidden sm:inline">{isVoiceChatActive ? (dir === 'rtl' ? 'خروج' : 'Leave') : (dir === 'rtl' ? 'دخول صوتي' : 'Join Voice')}</span>
+              <span className="sm:hidden">{isVoiceChatActive ? (dir === 'rtl' ? 'خروج' : 'Leave') : (dir === 'rtl' ? 'صوتي' : 'Voice')}</span>
             </Button>
           </div>
         </div>
@@ -1753,15 +1744,15 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
 
       {/* Messages - Mobile responsive */}
       <ScrollArea 
-        className="flex-1 p-2 sm:p-4 relative z-10 w-full min-w-0 touch-pan-y"
+        className="flex-1 p-3 sm:p-4 relative z-10 w-full min-w-0 touch-pan-y"
         style={{
-          maxHeight: 'calc(100dvh - 280px)',
-          height: 'calc(100dvh - 280px)',
+          maxHeight: 'calc(100dvh - 320px)',
+          height: 'calc(100dvh - 320px)',
           WebkitOverflowScrolling: 'touch',
           touchAction: 'pan-y pinch-zoom'
         }}
       >
-        <div className="space-y-2 sm:space-y-4 pb-4 min-w-0">
+        <div className="space-y-3 sm:space-y-4 pb-6 min-w-0">
           {messages.map((message, index) => {
             const sender = members.find(m => m.id === message.senderId) || { ...displayUser, isPremiumSubscriber: true };
             const isCurrentUser = message.senderId === displayUser.id;
