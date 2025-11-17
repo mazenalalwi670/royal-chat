@@ -7,7 +7,13 @@
   html {
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
+    -moz-tap-highlight-color: transparent;
+    -ms-tap-highlight-color: transparent;
+    tap-highlight-color: transparent;
     touch-action: manipulation;
+    /* Android specific */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   
   body {
@@ -20,14 +26,19 @@
     overflow: hidden;
   }
   
-  /* Prevent text selection on mobile during touch */
+  /* Prevent text selection on mobile during touch - but allow for buttons and inputs */
   * {
     -webkit-touch-callout: none;
+  }
+  
+  /* Allow text selection in buttons and interactive elements */
+  button, a, input, textarea, [role="button"] {
     -webkit-user-select: none;
-    -khtml-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
   
   /* Allow text selection in input fields */
@@ -37,6 +48,23 @@
     -moz-user-select: text;
     -ms-user-select: text;
     user-select: text;
+    touch-action: manipulation;
+  }
+  
+  /* Mobile touch improvements */
+  @media (max-width: 640px) {
+    button, [role="button"], a {
+      min-height: 44px;
+      min-width: 44px;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    /* Ensure all interactive elements are easily tappable */
+    .touch-target {
+      min-height: 44px;
+      min-width: 44px;
+    }
   }
 }
 

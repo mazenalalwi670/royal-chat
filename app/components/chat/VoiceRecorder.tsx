@@ -45,17 +45,102 @@ export function VoiceRecorder({ onRecordingComplete, onCancel }: VoiceRecorderPr
 
   const startRecording = async () => {
     try {
+      // Check if getUserMedia is supported
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('getUserMedia is not supported');
+      }
+
+      // Request microphone permission with better Android support
       const stream = await navigator.mediaDevices.getUserMedia({ 
         audio: {
           echoCancellation: true,
           noiseSuppression: true,
-          autoGainControl: true
+          autoGainControl: true,
+          sampleRate: 44100,
+          channelCount: 1,
+          // Android specific constraints
+          latency: 0.01,
+          googEchoCancellation: true,
+          googNoiseSuppression: true,
+          googAutoGainControl: true
         } 
+      }).catch((error) => {
+        console.error('Error accessing microphone:', error);
+        throw error;
       });
+      
       streamRef.current = stream;
       
+      // Detect best mime type for Android and other mobile devices
+      let mimeType = 'audio/webm';
+      const supportedTypes = [
+        'audio/webm;codecs=opus',
+        'audio/webm',
+        'audio/ogg;codecs=opus',
+        'audio/ogg',
+        'audio/mp4',
+        'audio/aac',
+        'audio/mpeg',
+        'audio/wav'
+      ];
+      
+      for (const type of supportedTypes) {
+        if (MediaRecorder.isTypeSupported(type)) {
+          mimeType = type;
+          break;
+        }
+      }
+      
+      // Fallback for Android devices that don't support MediaRecorder properly
+      if (!MediaRecorder.isTypeSupported(mimeType)) {
+        // Try default MediaRecorder without mimeType (Android fallback)
+        try {
+          const recorder = new MediaRecorder(stream);
+          recorder.start();
+          setMediaRecorder(recorder);
+          setAudioChunks([]);
+          setIsRecording(true);
+          setRecordingTime(0);
+          
+          const chunks: Blob[] = [];
+          recorder.ondataavailable = (event) => {
+            if (event.data.size > 0) {
+              chunks.push(event.data);
+            }
+          };
+          
+          recorder.onstop = () => {
+            const audioBlob = new Blob(chunks, { type: 'audio/webm' });
+            const duration = recordingTime;
+            
+            const url = URL.createObjectURL(audioBlob);
+            setAudioUrl(url);
+            setAudioChunks(chunks);
+            setHasRecorded(true);
+            
+            if (audioRef.current) {
+              audioRef.current.pause();
+            }
+            const audio = new Audio(url);
+            audioRef.current = audio;
+            
+            stream.getTracks().forEach(track => track.stop());
+          };
+          
+          intervalRef.current = setInterval(() => {
+            setRecordingTime(prev => prev + 1);
+          }, 1000);
+          
+          return;
+        } catch (fallbackError) {
+          console.error('Fallback MediaRecorder failed:', fallbackError);
+          throw new Error('MediaRecorder not supported on this device');
+        }
+      }
+      
       const recorder = new MediaRecorder(stream, {
-        mimeType: MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/ogg'
+        mimeType: mimeType,
+        audioBitsPerSecond: 128000 // Good quality for Android
       });
       
       const chunks: Blob[] = [];
@@ -196,34 +281,35 @@ export function VoiceRecorder({ onRecordingComplete, onCancel }: VoiceRecorderPr
     }
   };
 
-  // Show preview and send/delete buttons after recording
+      // Show preview and send/delete buttons after recording
   if (hasRecorded && audioUrl) {
     return (
       <div className={cn(
-        "flex items-center gap-2 px-3 py-2 bg-red-500/10 border border-red-500/30 rounded-full",
+        "flex items-center gap-2 px-3 py-2 bg-red-500/10 border border-red-500/30 rounded-full touch-manipulation",
         dir === 'rtl' ? 'flex-row-reverse' : ''
-      )} dir={dir}>
+      )} dir={dir} style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}>
         {/* Audio Preview */}
         <div className="flex items-center gap-2 flex-1 min-w-0">
           <Button
             type="button"
             size="icon"
             variant="ghost"
-            className="rounded-full h-8 w-8 flex-shrink-0"
+            className="rounded-full h-10 w-10 sm:h-8 sm:w-8 flex-shrink-0 touch-manipulation min-h-[44px] min-w-[44px]"
             onClick={() => {
               if (audioRef.current) {
                 if (audioRef.current.paused) {
-                  audioRef.current.play();
+                  audioRef.current.play().catch(err => console.error('Error playing audio:', err));
                 } else {
                   audioRef.current.pause();
                 }
               }
             }}
+            style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
           >
-            <Mic className="w-4 h-4 text-red-600" />
+            <Mic className="w-5 h-5 sm:w-4 sm:h-4 text-red-600" />
           </Button>
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-medium text-red-600 truncate">
+            <p className="text-xs sm:text-[10px] font-medium text-red-600 truncate">
               {formatTime(recordingTime)}
             </p>
             <audio ref={audioRef} src={audioUrl} className="hidden" />
@@ -235,11 +321,12 @@ export function VoiceRecorder({ onRecordingComplete, onCancel }: VoiceRecorderPr
           type="button"
           size="icon"
           variant="ghost"
-          className="h-8 w-8 rounded-full hover:bg-red-500/20"
+          className="h-10 w-10 sm:h-8 sm:w-8 rounded-full hover:bg-red-500/20 touch-manipulation min-h-[44px] min-w-[44px]"
           onClick={cancelRecording}
           title={dir === 'rtl' ? 'حذف' : 'Delete'}
+          style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
         >
-          <Trash2 className="w-4 h-4 text-red-600" />
+          <Trash2 className="w-5 h-5 sm:w-4 sm:h-4 text-red-600" />
         </Button>
         
         {/* Send Button */}
@@ -247,11 +334,12 @@ export function VoiceRecorder({ onRecordingComplete, onCancel }: VoiceRecorderPr
           type="button"
           size="icon"
           variant="ghost"
-          className="h-8 w-8 rounded-full bg-primary hover:bg-primary/90 text-white"
+          className="h-10 w-10 sm:h-8 sm:w-8 rounded-full bg-primary hover:bg-primary/90 text-white touch-manipulation min-h-[44px] min-w-[44px]"
           onClick={sendRecording}
           title={dir === 'rtl' ? 'إرسال' : 'Send'}
+          style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
         >
-          <Send className="w-4 h-4" />
+          <Send className="w-5 h-5 sm:w-4 sm:h-4" />
         </Button>
       </div>
     );
@@ -267,9 +355,10 @@ export function VoiceRecorder({ onRecordingComplete, onCancel }: VoiceRecorderPr
       onMouseLeave={handleMouseUp}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
       size="icon"
       className={cn(
-        "rounded-full h-9 w-9 sm:h-10 sm:w-10 transition-all duration-200",
+        "rounded-full h-11 w-11 sm:h-10 sm:w-10 transition-all duration-200 touch-manipulation min-h-[44px] min-w-[44px]",
         isRecording 
           ? "bg-red-500 hover:bg-red-600 text-white animate-pulse scale-110" 
           : "bg-red-500 hover:bg-red-600 text-white",
@@ -279,16 +368,17 @@ export function VoiceRecorder({ onRecordingComplete, onCancel }: VoiceRecorderPr
       style={{
         WebkitTapHighlightColor: 'transparent',
         touchAction: 'manipulation',
-        userSelect: 'none'
+        userSelect: 'none',
+        WebkitUserSelect: 'none'
       }}
     >
       {isRecording ? (
         <div className="flex items-center gap-1">
-          <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
-          <span className="text-xs font-mono">{formatTime(recordingTime)}</span>
+          <div className="w-2.5 h-2.5 sm:w-2 sm:h-2 bg-white rounded-full animate-pulse" />
+          <span className="text-xs sm:text-[10px] font-mono">{formatTime(recordingTime)}</span>
         </div>
       ) : (
-        <Mic className="w-5 h-5" />
+        <Mic className="w-6 h-6 sm:w-5 sm:h-5" />
       )}
     </Button>
   );

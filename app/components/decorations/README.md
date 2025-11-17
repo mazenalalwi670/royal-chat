@@ -126,3 +126,4 @@ import { ModernIcon, PremiumBadge } from '@/components/icons/ModernIcons';
 - الحركات محسّنة للأداء
 - يمكن تخصيص الألوان والحركات بسهولة
 
+

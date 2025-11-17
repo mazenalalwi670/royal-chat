@@ -363,7 +363,14 @@ export function ChatInterface({
     <Card className="flex flex-col h-full w-full min-w-0 rounded-none border-0 overflow-hidden" dir={dir}>
       <ChatHeader conversation={appConversation} currentUser={appUser} />
 
-      <ScrollArea className="flex-1 p-2 sm:p-4 min-h-0 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 200px)' }}>
+      <ScrollArea 
+        className="flex-1 p-2 sm:p-4 min-h-0 overflow-y-auto touch-manipulation" 
+        style={{ 
+          maxHeight: 'calc(100vh - 200px)',
+          WebkitOverflowScrolling: 'touch',
+          touchAction: 'pan-y pinch-zoom'
+        }}
+      >
         <div className="space-y-3 sm:space-y-4 pb-2 sm:pb-4 min-w-0">
           {appMessages.map((message) => {
             interface ConversationInput {

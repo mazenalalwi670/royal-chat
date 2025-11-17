@@ -34,10 +34,23 @@ export const WebSocketProvider = ({ children }: WebSocketProviderProps) => {
         ? 'wss://' + window.location.host 
         : 'ws://localhost:4002');
     
-    // Initialize socket connection
+    // Initialize socket connection with Android support
     const socketInstance = io(wsUrl, {
-      transports: ['websocket'],
-      secure: wsUrl.startsWith('wss://') || wsUrl.startsWith('https://')
+      transports: ['websocket', 'polling'], // Fallback to polling for Android
+      upgrade: true,
+      rememberUpgrade: true,
+      secure: wsUrl.startsWith('wss://') || wsUrl.startsWith('https://'),
+      // Android specific settings
+      reconnection: true,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+      reconnectionAttempts: Infinity,
+      timeout: 20000,
+      forceNew: false,
+      // Android WebView compatibility
+      autoConnect: true,
+      // Better error handling for Android
+      rejectUnauthorized: false
     });
 
     const onConnect = () => {

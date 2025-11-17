@@ -88,8 +88,15 @@ export function ChatHeader({ conversation, currentUser }: ChatHeaderProps) {
         </div>
 
         <div className={`flex items-center gap-1 sm:gap-2 flex-shrink-0 ${dir === 'rtl' ? 'flex-row-reverse' : ''}`}>
-          <Button type="button" size="icon" variant="ghost" className="rounded-full h-8 w-8 sm:h-9 sm:w-9" title={t('common.search')}>
-            <Search className="w-4 h-4 sm:w-5 sm:h-5" />
+          <Button 
+            type="button" 
+            size="icon" 
+            variant="ghost" 
+            className="rounded-full h-10 w-10 sm:h-9 sm:w-9 touch-manipulation min-h-[44px] min-w-[44px]" 
+            title={t('common.search')}
+            style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
+          >
+            <Search className="w-5 h-5 sm:w-4 sm:h-4" />
           </Button>
           {!isGroup && (
             <>
@@ -97,29 +104,38 @@ export function ChatHeader({ conversation, currentUser }: ChatHeaderProps) {
                 type="button" 
                 size="icon" 
                 variant="ghost" 
-                className="rounded-full h-8 w-8 sm:h-9 sm:w-9" 
+                className="rounded-full h-10 w-10 sm:h-9 sm:w-9 touch-manipulation min-h-[44px] min-w-[44px]" 
                 title={dir === 'rtl' ? 'مكالمة صوتية' : 'Voice Call'}
                 onClick={() => setIsVoiceCallOpen(true)}
+                style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
               >
-                <Phone className="w-4 h-4 sm:w-5 sm:h-5" />
+                <Phone className="w-5 h-5 sm:w-4 sm:h-4" />
               </Button>
               <Button 
                 type="button" 
                 size="icon" 
                 variant="ghost" 
-                className="rounded-full h-8 w-8 sm:h-9 sm:w-9" 
+                className="rounded-full h-10 w-10 sm:h-9 sm:w-9 touch-manipulation min-h-[44px] min-w-[44px]" 
                 title={dir === 'rtl' ? 'مكالمة فيديو' : 'Video Call'}
                 onClick={() => setIsVideoCallOpen(true)}
+                style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
               >
-                <Video className="w-4 h-4 sm:w-5 sm:h-5" />
+                <Video className="w-5 h-5 sm:w-4 sm:h-4" />
               </Button>
             </>
           )}
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button type="button" size="icon" variant="ghost" className="rounded-full h-8 w-8 sm:h-9 sm:w-9" title={dir === 'rtl' ? 'المزيد' : 'More'}>
-                <MoreVertical className="w-4 h-4 sm:w-5 sm:h-5" />
+              <Button 
+                type="button" 
+                size="icon" 
+                variant="ghost" 
+                className="rounded-full h-10 w-10 sm:h-9 sm:w-9 touch-manipulation min-h-[44px] min-w-[44px]" 
+                title={dir === 'rtl' ? 'المزيد' : 'More'}
+                style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
+              >
+                <MoreVertical className="w-5 h-5 sm:w-4 sm:h-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align={dir === 'rtl' ? 'start' : 'end'} className="w-56">

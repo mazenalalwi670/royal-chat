@@ -132,12 +132,16 @@ export function MessageBubble({
       onMouseEnter={() => setShowActions(true)}
       onMouseLeave={() => setShowActions(false)}
       onTouchStart={(e) => {
-        e.preventDefault();
+        e.stopPropagation();
         setShowActions(true);
       }}
       onTouchEnd={(e) => {
-        e.preventDefault();
+        e.stopPropagation();
         setTimeout(() => setShowActions(false), 3000);
+      }}
+      onClick={(e) => {
+        e.stopPropagation();
+        setShowActions(!showActions);
       }}
       style={{
         WebkitTapHighlightColor: 'transparent',
@@ -350,13 +354,14 @@ export function MessageBubble({
                                   type="button"
                                   size="icon"
                                   variant="ghost"
-                                  className="rounded-full h-10 w-10"
+                                  className="rounded-full h-12 w-12 sm:h-10 sm:w-10 touch-manipulation min-h-[44px] min-w-[44px]"
                                   onClick={() => {
                                     const audio = new Audio(attachment.url);
                                     audio.play();
                                   }}
+                                  style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
                                 >
-                                  <Play className="w-5 h-5" />
+                                  <Play className="w-6 h-6 sm:w-5 sm:h-5" />
                                 </Button>
                                 <div className="flex-1 min-w-0">
                                   <p className="text-xs font-medium truncate">
@@ -389,10 +394,11 @@ export function MessageBubble({
                                   type="button"
                                   size="icon"
                                   variant="ghost"
-                                  className="h-8 w-8"
+                                  className="h-10 w-10 sm:h-8 sm:w-8 touch-manipulation min-h-[44px] min-w-[44px]"
                                   onClick={() => window.open(attachment.url, '_blank')}
+                                  style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
                                 >
-                                  <Download className="w-4 h-4" />
+                                  <Download className="w-5 h-5 sm:w-4 sm:h-4" />
                                 </Button>
                               </div>
                             );
@@ -536,10 +542,11 @@ export function MessageBubble({
                     type="button"
                     size="sm"
                     variant="secondary"
-                    className="h-7 w-7 p-0 shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="h-9 w-9 sm:h-7 sm:w-7 p-0 shadow-md opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity touch-manipulation min-h-[44px] min-w-[44px]"
                     title={dir === 'rtl' ? 'تفاعل' : 'React'}
+                    style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
                   >
-                    <Smile className="w-3.5 h-3.5" />
+                    <Smile className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-2">
@@ -564,10 +571,11 @@ export function MessageBubble({
                     type="button"
                     size="sm"
                     variant="secondary"
-                    className="h-7 w-7 p-0 shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="h-9 w-9 sm:h-7 sm:w-7 p-0 shadow-md opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity touch-manipulation min-h-[44px] min-w-[44px]"
                     title={dir === 'rtl' ? 'المزيد' : 'More'}
+                    style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
                   >
-                    <MoreVertical className="w-3.5 h-3.5" />
+                    <MoreVertical className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align={dir === 'rtl' ? 'end' : 'start'}>

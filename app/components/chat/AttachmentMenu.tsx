@@ -60,12 +60,13 @@ export function AttachmentMenu({ onSelect, onClose }: AttachmentMenuProps) {
   return (
     <div 
       className={cn(
-        "absolute bottom-full right-0 mb-2 bg-background border rounded-lg shadow-xl p-2 z-50 min-w-[200px]",
+        "absolute bottom-full right-0 mb-2 bg-background border rounded-lg shadow-xl p-2 sm:p-3 z-50 min-w-[200px] sm:min-w-[240px] touch-manipulation",
         dir === 'rtl' && 'left-0 right-auto'
       )}
       dir={dir}
+      style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
     >
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-3 gap-2 sm:gap-3">
         {attachments.map((item) => {
           const Icon = item.icon;
           return (
@@ -74,13 +75,14 @@ export function AttachmentMenu({ onSelect, onClose }: AttachmentMenuProps) {
               type="button"
               variant="ghost"
               className={cn(
-                "flex flex-col items-center gap-2 p-3 h-auto hover:bg-accent transition-colors",
+                "flex flex-col items-center gap-2 p-3 sm:p-4 h-auto hover:bg-accent transition-colors touch-manipulation min-h-[80px] sm:min-h-[70px]",
                 dir === 'rtl' && 'flex-col-reverse'
               )}
               onClick={() => handleSelect(item.type)}
+              style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
             >
-              <Icon className={cn("w-6 h-6", item.color)} />
-              <span className="text-xs">{item.label}</span>
+              <Icon className={cn("w-7 h-7 sm:w-6 sm:h-6", item.color)} />
+              <span className="text-xs sm:text-[10px] font-medium">{item.label}</span>
             </Button>
           );
         })}

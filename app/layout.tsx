@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { WebSocketProvider } from './contexts/WebSocketContext';
 import { LanguageProvider } from './contexts/LanguageContext';
@@ -12,12 +12,13 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 export const metadata: Metadata = {
   title: 'Royal Chat - تطبيق الدردشة المميز',
   description: 'تطبيق دردشة حديث مع ميزات متقدمة',
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 5,
-    userScalable: true,
-  },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#ffffff' },
     { media: '(prefers-color-scheme: dark)', color: '#0f172a' },
@@ -32,12 +33,18 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        {/* Permissions for camera and microphone */}
-        <meta httpEquiv="Permissions-Policy" content="camera=*, microphone=*" />
+        {/* Android specific */}
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="color-scheme" content="light dark" />
+        {/* Permissions for camera and microphone - Android support */}
+        <meta httpEquiv="Permissions-Policy" content="camera=*, microphone=*, geolocation=*" />
+        {/* Android WebView support */}
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="msapplication-tap-highlight" content="no" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
