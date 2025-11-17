@@ -259,10 +259,100 @@ app.prepare().then(() => {
       });
     });
 
+    // Register user (for contacts sync)
+    socket.on('register_user', (data) => {
+      registeredUsers.set(data.userId, {
+        id: data.userId,
+        phoneNumber: data.phoneNumber,
+        name: data.name,
+        avatar: data.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.userId}`,
+        status: 'online',
+        registeredAt: new Date()
+      });
+      
+      // Notify all users about new registration
+      io.emit('user_registered', {
+        userId: data.userId,
+        phoneNumber: data.phoneNumber,
+        name: data.name,
+        avatar: data.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.userId}`
+      });
+    });
+
+    // Get all users (for contacts sync)
+    socket.on('get_all_users', () => {
+      const allUsers = Array.from(registeredUsers.values()).map(u => ({
+        id: u.id,
+        phoneNumber: u.phoneNumber,
+        name: u.name,
+        avatar: u.avatar,
+        status: u.status || 'offline',
+        lastSeen: u.lastSeen
+      }));
+      socket.emit('all_users', allUsers);
+    });
+
+    // Search user by phone number
+    socket.on('search_user', (data, callback) => {
+      const { phoneNumber } = data;
+      const cleanNumber = phoneNumber.replace(/[\s\-\(\)]/g, '');
+      const user = Array.from(registeredUsers.values()).find(
+        u => u.phoneNumber && u.phoneNumber.replace(/[\s\-\(\)]/g, '') === cleanNumber
+      );
+      if (user) {
+        callback({ 
+          user: {
+            id: user.id,
+            phoneNumber: user.phoneNumber,
+            name: user.name,
+            avatar: user.avatar,
+            status: user.status || 'offline',
+            lastSeen: user.lastSeen
+          }
+        });
+      } else {
+        callback({ user: null });
+      }
+    });
+
+    // Add contact
+    socket.on('add_contact', (data) => {
+      const { userId, contactId } = data;
+      if (!userContacts.has(userId)) {
+        userContacts.set(userId, new Set());
+      }
+      userContacts.get(userId).add(contactId);
+    });
+
+    // Remove contact
+    socket.on('remove_contact', (data) => {
+      const { userId, contactId } = data;
+      if (userContacts.has(userId)) {
+        userContacts.get(userId).delete(contactId);
+      }
+    });
+
+    // Send invitation
+    socket.on('send_invitation', (data) => {
+      // Store invitation (can be used for notifications later)
+      // For now, just acknowledge it
+      socket.emit('invitation_sent', {
+        toPhoneNumber: data.toPhoneNumber,
+        timestamp: new Date()
+      });
+    });
+
     // Handle disconnection
     socket.on('disconnect', () => {
       const userInfo = socketActiveUsers.get(socket.id);
       if (userInfo) {
+        // Update user status to offline
+        const user = registeredUsers.get(userInfo.userId);
+        if (user) {
+          user.status = 'offline';
+          user.lastSeen = new Date();
+        }
+        
         socket.rooms.forEach(room => {
           socket.to(room).emit('user_left', {
             userId: userInfo.userId,
