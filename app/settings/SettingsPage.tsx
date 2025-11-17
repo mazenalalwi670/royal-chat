@@ -29,10 +29,10 @@ export function SettingsPage({ currentUser, onUpdateUser }: SettingsPageProps) {
   return (
     <div className="flex-1 h-full" dir={dir}>
       <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="flex items-center gap-3 p-4">
+        <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4">
           <div className="flex items-center gap-2">
-            <Crown className="w-6 h-6" style={{ color: `hsl(var(--primary))` }} />
-            <h1 className="text-2xl font-bold" style={{
+            <Crown className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: `hsl(var(--primary))` }} />
+            <h1 className="text-xl sm:text-2xl font-bold" style={{
               color: `hsl(var(--primary))`
             }}>
               {t('settings.title')}
@@ -41,61 +41,64 @@ export function SettingsPage({ currentUser, onUpdateUser }: SettingsPageProps) {
         </div>
       </div>
 
-      <ScrollArea className="h-[calc(100vh-73px)]">
-        <div className="p-6">
+      <ScrollArea className="h-[calc(100dvh-73px)]" style={{ WebkitOverflowScrolling: 'touch' }}>
+        <div className="p-3 sm:p-4 md:p-6">
           <Tabs defaultValue="profile" className="w-full">
-            <TabsList className="grid w-full grid-cols-7 lg:w-[700px]">
-              <TabsTrigger value="profile" className="gap-2">
-                <User className="w-4 h-4" />
+            <TabsList className="grid w-full grid-cols-4 sm:grid-cols-7 gap-1 sm:gap-2 overflow-x-auto scrollbar-hide" style={{ 
+              WebkitOverflowScrolling: 'touch',
+              touchAction: 'pan-x pinch-zoom'
+            }}>
+              <TabsTrigger value="profile" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3 min-h-[44px] touch-manipulation">
+                <User className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
                 <span className="hidden sm:inline">{t('settings.profile')}</span>
               </TabsTrigger>
-              <TabsTrigger value="appearance" className="gap-2">
-                <Palette className="w-4 h-4" />
+              <TabsTrigger value="appearance" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3 min-h-[44px] touch-manipulation">
+                <Palette className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
                 <span className="hidden sm:inline">{t('settings.appearance')}</span>
               </TabsTrigger>
-              <TabsTrigger value="notifications" className="gap-2">
-                <Bell className="w-4 h-4" />
+              <TabsTrigger value="notifications" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3 min-h-[44px] touch-manipulation">
+                <Bell className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
                 <span className="hidden sm:inline">{t('settings.notifications')}</span>
               </TabsTrigger>
-              <TabsTrigger value="privacy" className="gap-2">
-                <Lock className="w-4 h-4" />
+              <TabsTrigger value="privacy" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3 min-h-[44px] touch-manipulation">
+                <Lock className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
                 <span className="hidden sm:inline">{t('settings.privacy')}</span>
               </TabsTrigger>
-              <TabsTrigger value="chat" className="gap-2">
-                <MessageSquare className="w-4 h-4" />
+              <TabsTrigger value="chat" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3 min-h-[44px] touch-manipulation">
+                <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
                 <span className="hidden sm:inline">{t('settings.chat')}</span>
               </TabsTrigger>
-              <TabsTrigger value="language" className="gap-2">
-                <Globe className="w-4 h-4" />
+              <TabsTrigger value="language" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3 min-h-[44px] touch-manipulation">
+                <Globe className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
                 <span className="hidden sm:inline">{t('settings.language')}</span>
               </TabsTrigger>
-              <TabsTrigger value="admin" className="gap-2">
-                <Shield className="w-4 h-4" />
+              <TabsTrigger value="admin" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3 min-h-[44px] touch-manipulation">
+                <Shield className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
                 <span className="hidden sm:inline">{dir === 'rtl' ? 'لوحة التحكم' : 'Admin Panel'}</span>
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="profile" className="mt-6">
+            <TabsContent value="profile" className="mt-4 sm:mt-6">
               <ProfileSettings currentUser={currentUser} onUpdateUser={onUpdateUser} />
             </TabsContent>
 
-            <TabsContent value="appearance" className="mt-6">
+            <TabsContent value="appearance" className="mt-4 sm:mt-6">
               <AppearanceSettings />
             </TabsContent>
 
-            <TabsContent value="notifications" className="mt-6">
+            <TabsContent value="notifications" className="mt-4 sm:mt-6">
               <NotificationSettings />
             </TabsContent>
 
-            <TabsContent value="privacy" className="mt-6">
+            <TabsContent value="privacy" className="mt-4 sm:mt-6">
               <PrivacySettings />
             </TabsContent>
 
-            <TabsContent value="chat" className="mt-6">
+            <TabsContent value="chat" className="mt-4 sm:mt-6">
               <ChatSettings />
             </TabsContent>
 
-            <TabsContent value="language" className="mt-6">
+            <TabsContent value="language" className="mt-4 sm:mt-6">
               <LanguageSettings />
             </TabsContent>
 

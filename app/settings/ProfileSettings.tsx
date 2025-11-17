@@ -12,6 +12,7 @@ import { Camera, Save, Phone, MapPin, X, Link as LinkIcon } from 'lucide-react';
 import { User } from '@/types/chat';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useRef } from 'react';
+import { cn } from '@/lib/utils';
 
 interface ProfileSettingsProps {
   currentUser: User;
@@ -148,16 +149,17 @@ export function ProfileSettings({ currentUser, onUpdateUser }: ProfileSettingsPr
   };
 
   return (
-    <div className="space-y-6" dir={dir}>
+    <div className="space-y-4 sm:space-y-6" dir={dir}>
       <Card>
-        <CardHeader>
-          <CardTitle>{t('profile.title')}</CardTitle>
-          <CardDescription>{t('profile.title')} - {dir === 'rtl' ? 'تحديث معلوماتك الشخصية' : 'Update your personal information'}</CardDescription>
+        <CardHeader className="p-4 sm:p-6">
+          <CardTitle className="text-lg sm:text-xl">{t('profile.title')}</CardTitle>
+          <CardDescription className="text-sm sm:text-base mt-1">{t('profile.title')} - {dir === 'rtl' ? 'تحديث معلوماتك الشخصية' : 'Update your personal information'}</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="flex items-start gap-6">
-            <div className="relative group">
-              <Avatar className="w-24 h-24 border-4 border-amber-500/20 shadow-lg transition-all duration-300 group-hover:scale-105">
+        <CardContent className="space-y-4 sm:space-y-6 p-4 sm:p-6">
+          {/* Mobile-first layout: Stack on mobile, side-by-side on desktop */}
+          <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
+            <div className="relative group w-full sm:w-auto flex justify-center sm:justify-start">
+              <Avatar className="w-20 h-20 sm:w-24 sm:h-24 border-2 sm:border-4 border-amber-500/20 shadow-lg transition-all duration-300 group-hover:scale-105">
                 <AvatarImage src={avatarPreview || avatar || defaultAvatar} 
                              onError={(e) => {
                                // If image fails to load, show Royal Crown icon (mandatory default)
@@ -165,12 +167,12 @@ export function ProfileSettings({ currentUser, onUpdateUser }: ProfileSettingsPr
                                const royalCrownIcon = getRoyalCrownIcon();
                                target.src = royalCrownIcon;
                              }} />
-                <AvatarFallback className="bg-gradient-to-br from-amber-600 to-amber-500 text-white text-3xl font-bold flex items-center justify-center">
-                  <svg width="48" height="48" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <AvatarFallback className="bg-gradient-to-br from-amber-600 to-amber-500 text-white text-2xl sm:text-3xl font-bold flex items-center justify-center">
+                  <svg width="40" height="40" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="sm:w-12 sm:h-12">
                     <path d="M50 140 L75 60 L100 80 L125 60 L150 140 Z" 
                           fill="#FFD700" 
                           stroke="#FFA500" 
-                          stroke-width="2"/>
+                          strokeWidth="2"/>
                     <circle cx="75" cy="60" r="8" fill="#FFD700"/>
                     <circle cx="100" cy="50" r="10" fill="#FFD700"/>
                     <circle cx="125" cy="60" r="8" fill="#FFD700"/>
@@ -190,19 +192,19 @@ export function ProfileSettings({ currentUser, onUpdateUser }: ProfileSettingsPr
                   type="button"
                   size="icon"
                   onClick={() => fileInputRef.current?.click()}
-                  className="rounded-full w-10 h-10 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600 shadow-lg transition-all duration-300 hover:scale-110 z-10"
+                  className="rounded-full w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600 shadow-lg transition-all duration-300 hover:scale-110 z-10 min-h-[40px] min-w-[40px] touch-manipulation"
                   title={dir === 'rtl' ? 'رفع صورة من الجهاز' : 'Upload Image from Device'}
                 >
-                  <Camera className="w-5 h-5" />
+                  <Camera className="w-5 h-5 sm:w-6 sm:h-6" />
                 </Button>
                 <Button
                   type="button"
                   size="icon"
                   onClick={() => setShowUrlInput(!showUrlInput)}
-                  className="rounded-full w-10 h-10 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 shadow-lg transition-all duration-300 hover:scale-110 z-10"
+                  className="rounded-full w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 shadow-lg transition-all duration-300 hover:scale-110 z-10 min-h-[40px] min-w-[40px] touch-manipulation"
                   title={dir === 'rtl' ? 'إدخال رابط الصورة' : 'Enter Image URL'}
                 >
-                  <LinkIcon className="w-5 h-5" />
+                  <LinkIcon className="w-5 h-5 sm:w-6 sm:h-6" />
                 </Button>
               </div>
               {(avatarPreview || (avatar && !avatar.includes('data:image/svg+xml'))) && (
@@ -210,30 +212,30 @@ export function ProfileSettings({ currentUser, onUpdateUser }: ProfileSettingsPr
                   type="button"
                   size="icon"
                   onClick={handleRemoveAvatar}
-                  className="absolute top-0 right-0 rounded-full w-8 h-8 bg-red-500 hover:bg-red-600 shadow-lg transition-all duration-300 hover:scale-110 z-10"
+                  className="absolute top-0 right-0 rounded-full w-8 h-8 sm:w-10 sm:h-10 bg-red-500 hover:bg-red-600 shadow-lg transition-all duration-300 hover:scale-110 z-10 min-h-[32px] min-w-[32px] touch-manipulation"
                   title={dir === 'rtl' ? 'إزالة الصورة' : 'Remove Photo'}
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-4 h-4 sm:w-5 sm:h-5" />
                 </Button>
               )}
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 rounded-full transition-colors duration-300" />
               
-              {/* URL Input */}
+              {/* URL Input - Mobile responsive */}
               {showUrlInput && (
-                <div className={`absolute top-full mt-4 ${dir === 'rtl' ? 'right-0' : 'left-0'} w-80 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-xl border-2 border-amber-500/20 z-20`}>
+                <div className={`absolute top-full mt-4 ${dir === 'rtl' ? 'right-0' : 'left-0'} w-[calc(100vw-2rem)] sm:w-80 max-w-sm p-4 bg-white dark:bg-gray-800 rounded-lg shadow-xl border-2 border-amber-500/20 z-20`}>
                   <div className="space-y-3">
                     <Label htmlFor="image-url" className="text-sm font-semibold flex items-center gap-2">
                       <LinkIcon className="w-4 h-4" />
                       {dir === 'rtl' ? 'رابط الصورة' : 'Image URL'}
                     </Label>
-                    <div className="flex gap-2">
+                    <div className="flex flex-col sm:flex-row gap-2">
                       <Input
                         id="image-url"
                         type="url"
                         value={imageUrl}
                         onChange={(e) => setImageUrl(e.target.value)}
                         placeholder={dir === 'rtl' ? 'https://example.com/image.jpg' : 'https://example.com/image.jpg'}
-                        className="flex-1"
+                        className="flex-1 h-11 sm:h-10 text-sm sm:text-base"
                         dir="ltr"
                         onKeyDown={(e) => {
                           if (e.key === 'Enter') {
@@ -244,25 +246,28 @@ export function ProfileSettings({ currentUser, onUpdateUser }: ProfileSettingsPr
                           }
                         }}
                       />
-                      <Button
-                        type="button"
-                        onClick={handleImageUrlChange}
-                        className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600"
-                        size="sm"
-                      >
-                        {dir === 'rtl' ? 'تطبيق' : 'Apply'}
-                      </Button>
-                      <Button
-                        type="button"
-                        onClick={() => {
-                          setShowUrlInput(false);
-                          setImageUrl('');
-                        }}
-                        variant="outline"
-                        size="sm"
-                      >
-                        {dir === 'rtl' ? 'إلغاء' : 'Cancel'}
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button
+                          type="button"
+                          onClick={handleImageUrlChange}
+                          className="flex-1 sm:flex-none bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 h-11 sm:h-10 min-h-[44px] sm:min-h-[40px] touch-manipulation"
+                          size="sm"
+                        >
+                          {dir === 'rtl' ? 'تطبيق' : 'Apply'}
+                        </Button>
+                        <Button
+                          type="button"
+                          onClick={() => {
+                            setShowUrlInput(false);
+                            setImageUrl('');
+                          }}
+                          variant="outline"
+                          size="sm"
+                          className="flex-1 sm:flex-none h-11 sm:h-10 min-h-[44px] sm:min-h-[40px] touch-manipulation"
+                        >
+                          {dir === 'rtl' ? 'إلغاء' : 'Cancel'}
+                        </Button>
+                      </div>
                     </div>
                     <p className="text-xs text-gray-500">
                       {dir === 'rtl' ? 'أدخل رابط الصورة (http/https) أو data URL' : 'Enter image URL (http/https) or data URL'}
@@ -272,72 +277,79 @@ export function ProfileSettings({ currentUser, onUpdateUser }: ProfileSettingsPr
               )}
             </div>
 
-            <div className="flex-1 space-y-4">
+            <div className="flex-1 space-y-4 w-full">
               <div className="grid gap-2">
-                <Label htmlFor="name">{t('profile.name')}</Label>
+                <Label htmlFor="name" className="text-sm sm:text-base">{t('profile.name')}</Label>
                 <Input
                   id="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder={t('profile.name')}
                   dir={dir}
+                  className="h-11 sm:h-12 text-sm sm:text-base"
                 />
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="bio">{t('profile.bio')}</Label>
+                <Label htmlFor="bio" className="text-sm sm:text-base">{t('profile.bio')}</Label>
                 <Textarea
                   id="bio"
                   value={bio}
                   onChange={(e) => setBio(e.target.value)}
                   placeholder={t('profile.bio')}
-                  rows={3}
-                  className="resize-none"
+                  rows={4}
+                  className="resize-none h-24 sm:h-28 text-sm sm:text-base"
                   dir={dir}
                 />
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <Badge variant="secondary" className="bg-green-100 text-green-700">
+          <div className="flex items-center gap-2 pt-2">
+            <Badge variant="secondary" className="bg-green-100 text-green-700 text-xs sm:text-sm px-2 sm:px-3 py-1">
               {t(`status.${currentUser.status}`)}
             </Badge>
-            <span className="text-sm text-muted-foreground">{t('status.online')}</span>
+            <span className="text-xs sm:text-sm text-muted-foreground">{t('status.online')}</span>
           </div>
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader>
-          <CardTitle>{t('profile.title')} - {dir === 'rtl' ? 'معلومات الاتصال' : 'Contact Information'}</CardTitle>
-          <CardDescription>{t('profile.title')} - {dir === 'rtl' ? 'إدارة معلومات الاتصال الخاصة بك' : 'Manage your contact details'}</CardDescription>
+        <CardHeader className="p-4 sm:p-6">
+          <CardTitle className="text-lg sm:text-xl">{t('profile.title')} - {dir === 'rtl' ? 'معلومات الاتصال' : 'Contact Information'}</CardTitle>
+          <CardDescription className="text-sm sm:text-base mt-1">{t('profile.title')} - {dir === 'rtl' ? 'إدارة معلومات الاتصال الخاصة بك' : 'Manage your contact details'}</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 sm:space-y-5 p-4 sm:p-6">
           <div className="grid gap-2">
-            <Label htmlFor="phone">{t('profile.phone')}</Label>
+            <Label htmlFor="phone" className="text-sm sm:text-base">{t('profile.phone')}</Label>
             <div className="relative">
-              <Phone className={`absolute ${dir === 'rtl' ? 'right' : 'left'}-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground`} />
+              <Phone className={`absolute ${dir === 'rtl' ? 'right' : 'left'}-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground`} />
               <Input
                 id="phone"
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className={dir === 'rtl' ? 'pr-10' : 'pl-10'}
+                className={cn(
+                  dir === 'rtl' ? 'pr-10 sm:pr-12' : 'pl-10 sm:pl-12',
+                  "h-11 sm:h-12 text-sm sm:text-base"
+                )}
                 dir={dir}
               />
             </div>
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="location">{t('profile.location')}</Label>
+            <Label htmlFor="location" className="text-sm sm:text-base">{t('profile.location')}</Label>
             <div className="relative">
-              <MapPin className={`absolute ${dir === 'rtl' ? 'right' : 'left'}-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground`} />
+              <MapPin className={`absolute ${dir === 'rtl' ? 'right' : 'left'}-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground`} />
               <Input
                 id="location"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                className={dir === 'rtl' ? 'pr-10' : 'pl-10'}
+                className={cn(
+                  dir === 'rtl' ? 'pr-10 sm:pr-12' : 'pl-10 sm:pl-12',
+                  "h-11 sm:h-12 text-sm sm:text-base"
+                )}
                 dir={dir}
               />
             </div>
@@ -345,13 +357,13 @@ export function ProfileSettings({ currentUser, onUpdateUser }: ProfileSettingsPr
         </CardContent>
       </Card>
 
-      <div className={`flex ${dir === 'rtl' ? 'justify-start' : 'justify-end'}`}>
+      <div className={`flex ${dir === 'rtl' ? 'justify-start' : 'justify-end'} pt-2`}>
         <Button
           type="button"
           onClick={handleSave}
-          className="bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600"
+          className="bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600 h-12 sm:h-14 w-full sm:w-auto px-6 sm:px-8 text-base sm:text-lg font-semibold min-h-[48px] touch-manipulation"
         >
-          <Save className={`w-4 h-4 ${dir === 'rtl' ? 'ml-2' : 'mr-2'}`} />
+          <Save className={`w-5 h-5 sm:w-6 sm:h-6 ${dir === 'rtl' ? 'ml-2' : 'mr-2'}`} />
           {t('profile.saveChanges')}
         </Button>
       </div>
