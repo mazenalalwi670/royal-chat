@@ -28,11 +28,12 @@ export const WebSocketProvider = ({ children }: WebSocketProviderProps) => {
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    // Get WebSocket URL from environment or use default
+    // Get WebSocket URL from environment or use same host as app
+    // In Railway, WebSocket runs on the same port as Next.js
     const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 
-      (typeof window !== 'undefined' && window.location.protocol === 'https:' 
-        ? 'wss://' + window.location.host 
-        : 'ws://localhost:4002');
+      (typeof window !== 'undefined' 
+        ? (window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host
+        : 'ws://localhost:8080');
     
     // Initialize socket connection with Android support
     const socketInstance = io(wsUrl, {

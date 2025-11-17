@@ -27,7 +27,6 @@ Name: NEXT_PUBLIC_APP_URL
 Value: https://royal-chat-production.up.railway.app
 ```
 
-
 ### المتغير 2:
 
 ```

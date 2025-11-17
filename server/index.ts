@@ -677,7 +677,22 @@ io.on('connection', (socket) => {
   });
 });
 
-const PORT = (process.env.PORT ? parseInt(process.env.PORT, 10) : undefined) || 4002;
-server.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+// Use PORT from environment, or default to 4002 for local development
+// In Railway, we'll use a different port for WebSocket server
+const WS_PORT = process.env.WS_PORT ? parseInt(process.env.WS_PORT, 10) : (process.env.PORT ? parseInt(process.env.PORT, 10) + 1 : 4002);
+const HTTP_PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 8080;
+
+// In Railway, if PORT is set, we need to run WebSocket on a different port
+// But Railway only exposes one port, so we'll use the same port for both
+// The Next.js app will handle HTTP, and Socket.IO will handle WebSocket on the same port
+if (process.env.RAILWAY_ENVIRONMENT || process.env.PORT) {
+  // In Railway, use the same port (Socket.IO will handle WebSocket upgrade)
+  server.listen(HTTP_PORT, '0.0.0.0', () => {
+    console.log(`WebSocket server is running on port ${HTTP_PORT} (Railway mode)`);
+  });
+} else {
+  // Local development: use separate port
+  server.listen(WS_PORT, '0.0.0.0', () => {
+    console.log(`WebSocket server is running on port ${WS_PORT} (local mode)`);
+  });
+}
