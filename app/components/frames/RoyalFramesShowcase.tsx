@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Card } from '@/ui/card';
 import { Button } from '@/ui/button';
 import { Badge } from '@/ui/badge';
@@ -513,23 +513,51 @@ export function RoyalFramesShowcase({
   const scrollRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
+  const isScrollingRef = useRef(false);
 
   // Minimum swipe distance (in pixels)
   const minSwipeDistance = 50;
 
+  // Update currentIndex based on scroll position
+  const updateCurrentIndexFromScroll = useCallback(() => {
+    if (!scrollRef.current) return;
+    
+    const cardWidth = 288; // w-72 = 18rem = 288px
+    const gap = 16; // gap-4 = 1rem = 16px
+    const scrollLeft = scrollRef.current.scrollLeft;
+    const itemWidth = cardWidth + gap;
+    const newIndex = Math.max(0, Math.min(Math.round(scrollLeft / itemWidth), royalFrames.length - 1));
+    
+    setCurrentIndex(prevIndex => {
+      if (newIndex !== prevIndex) {
+        return newIndex;
+      }
+      return prevIndex;
+    });
+  }, [royalFrames.length]);
+
   const handleTouchStart = (e: React.TouchEvent) => {
     touchEndX.current = null;
     touchStartX.current = e.targetTouches[0].clientX;
+    isScrollingRef.current = true;
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     touchEndX.current = e.targetTouches[0].clientX;
+    // Update index during scroll for better UX
+    updateCurrentIndexFromScroll();
   };
 
   const handleTouchEnd = () => {
     if (!touchStartX.current || !touchEndX.current) {
       touchStartX.current = null;
       touchEndX.current = null;
+      isScrollingRef.current = false;
+      // Update index when scroll ends
+      setTimeout(() => {
+        updateCurrentIndexFromScroll();
+        isScrollingRef.current = false;
+      }, 100);
       return;
     }
     
@@ -537,61 +565,118 @@ export function RoyalFramesShowcase({
     const isLeftSwipe = distance > minSwipeDistance;
     const isRightSwipe = distance < -minSwipeDistance;
 
-    // For RTL, reverse the swipe direction
-    if (dir === 'rtl') {
-      if (isRightSwipe && currentIndex < royalFrames.length - 1) {
-        goToNext();
-      } else if (isLeftSwipe && currentIndex > 0) {
-        goToPrevious();
+    // Only snap if swipe distance is significant
+    if (Math.abs(distance) > minSwipeDistance && scrollRef.current) {
+      const cardWidth = 288;
+      const gap = 16;
+      const itemWidth = cardWidth + gap;
+      const currentScroll = scrollRef.current.scrollLeft;
+      let targetIndex = currentIndex;
+
+      // For RTL, reverse the swipe direction
+      if (dir === 'rtl') {
+        if (isRightSwipe && currentIndex < royalFrames.length - 1) {
+          targetIndex = currentIndex + 1;
+        } else if (isLeftSwipe && currentIndex > 0) {
+          targetIndex = currentIndex - 1;
+        }
+      } else {
+        if (isLeftSwipe && currentIndex < royalFrames.length - 1) {
+          targetIndex = currentIndex + 1;
+        } else if (isRightSwipe && currentIndex > 0) {
+          targetIndex = currentIndex - 1;
+        }
+      }
+
+      // Snap to the target index
+      if (targetIndex !== currentIndex) {
+        scrollRef.current.scrollTo({
+          left: targetIndex * itemWidth,
+          behavior: 'smooth'
+        });
+        setCurrentIndex(targetIndex);
+      } else {
+        // Snap to nearest item if no direction change
+        const nearestIndex = Math.round(currentScroll / itemWidth);
+        scrollRef.current.scrollTo({
+          left: nearestIndex * itemWidth,
+          behavior: 'smooth'
+        });
+        setCurrentIndex(nearestIndex);
       }
     } else {
-      if (isLeftSwipe && currentIndex < royalFrames.length - 1) {
-        goToNext();
-      } else if (isRightSwipe && currentIndex > 0) {
-        goToPrevious();
+      // Small movement - snap to nearest
+      if (scrollRef.current) {
+        const cardWidth = 288;
+        const gap = 16;
+        const itemWidth = cardWidth + gap;
+        const currentScroll = scrollRef.current.scrollLeft;
+        const nearestIndex = Math.round(currentScroll / itemWidth);
+        scrollRef.current.scrollTo({
+          left: nearestIndex * itemWidth,
+          behavior: 'smooth'
+        });
+        setCurrentIndex(nearestIndex);
       }
     }
 
     // Reset touch positions
     touchStartX.current = null;
     touchEndX.current = null;
+    isScrollingRef.current = false;
   };
 
   const goToNext = () => {
-    if (currentIndex < royalFrames.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-    } else {
-      setCurrentIndex(0); // Loop back to start
+    if (scrollRef.current) {
+      const cardWidth = 288;
+      const gap = 16;
+      const itemWidth = cardWidth + gap;
+      const nextIndex = currentIndex < royalFrames.length - 1 ? currentIndex + 1 : 0;
+      scrollRef.current.scrollTo({
+        left: nextIndex * itemWidth,
+        behavior: 'smooth'
+      });
+      setCurrentIndex(nextIndex);
     }
   };
 
   const goToPrevious = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-    } else {
-      setCurrentIndex(royalFrames.length - 1); // Loop to end
+    if (scrollRef.current) {
+      const cardWidth = 288;
+      const gap = 16;
+      const itemWidth = cardWidth + gap;
+      const prevIndex = currentIndex > 0 ? currentIndex - 1 : royalFrames.length - 1;
+      scrollRef.current.scrollTo({
+        left: prevIndex * itemWidth,
+        behavior: 'smooth'
+      });
+      setCurrentIndex(prevIndex);
     }
   };
 
+  // Handle scroll events to update currentIndex
   useEffect(() => {
-    if (scrollRef.current) {
-      const cardWidth = 288; // w-72 = 18rem = 288px
-      const gap = 16; // gap-4 = 1rem = 16px
-      scrollRef.current.scrollTo({
-        left: currentIndex * (cardWidth + gap),
-        behavior: 'smooth'
-      });
-    }
-  }, [currentIndex]);
+    const scrollElement = scrollRef.current;
+    if (!scrollElement) return;
 
+    const handleScroll = () => {
+      if (!isScrollingRef.current) {
+        updateCurrentIndexFromScroll();
+      }
+    };
+
+    scrollElement.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      scrollElement.removeEventListener('scroll', handleScroll);
+    };
+  }, [updateCurrentIndexFromScroll]);
+
+  // Initialize scroll position
   useEffect(() => {
-    if (selectedTab === 'frames' && royalFrames.length > 1) {
-      const interval = setInterval(() => {
-        setCurrentIndex((prev) => (prev + 1) % royalFrames.length);
-      }, 4000);
-      return () => clearInterval(interval);
+    if (scrollRef.current && currentIndex === 0) {
+      scrollRef.current.scrollLeft = 0;
     }
-  }, [selectedTab]);
+  }, []);
 
   if (!isVisible) return null;
 
@@ -760,10 +845,23 @@ export function RoyalFramesShowcase({
               <div
                 ref={scrollRef}
                 className="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-4 px-12"
-                style={{ scrollBehavior: 'smooth' }}
+                style={{ 
+                  scrollBehavior: 'smooth',
+                  WebkitOverflowScrolling: 'touch',
+                  touchAction: 'pan-x pinch-zoom',
+                  overscrollBehaviorX: 'contain'
+                }}
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
+                onScroll={() => {
+                  // Update index on scroll (debounced)
+                  if (!isScrollingRef.current) {
+                    requestAnimationFrame(() => {
+                      updateCurrentIndexFromScroll();
+                    });
+                  }
+                }}
               >
                 {royalFrames.map((frame, index) => (
                   <div
