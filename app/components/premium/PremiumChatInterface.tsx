@@ -389,8 +389,6 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
 
     // Listen for new messages - Real-time message receiving
     const handleReceiveMessage = (message: Message | { timestamp: string | Date }) => {
-      console.log('Received message:', message);
-      
       // Convert timestamp to Date object if it's a string (from WebSocket)
       const processedMessage: Message = {
         ...message as Message,
@@ -549,8 +547,6 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
       userStatus?: string;
       isPremiumSubscriber?: boolean;
     }>) => {
-      console.log('Received active users:', users);
-      
       // Add all active users to members list (real-time sync)
       setMembers(prev => {
         const existingIds = new Set(prev.map(m => m.id));
@@ -603,7 +599,6 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
       // User joined voice chat
       if (data.userId !== currentUser.id) {
         // Handle remote user audio stream
-        console.log(`User ${data.userName} joined voice chat`);
       }
     };
 

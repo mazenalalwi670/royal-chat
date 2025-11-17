@@ -127,3 +127,4 @@ import { ModernIcon, PremiumBadge } from '@/components/icons/ModernIcons';
 - يمكن تخصيص الألوان والحركات بسهولة
 
 
+

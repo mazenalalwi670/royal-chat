@@ -45,3 +45,15 @@ next-env.d.ts
 # OS
 Thumbs.db
 
+# Development scripts (not needed for deployment)
+convert-image.*
+fix-mockdata.*
+update-mockdata.*
+final-fix.*
+start-emulator.*
+image-base64.txt
+
+# Old/unused server files
+# server/index.ts (kept for reference, but not used - we use server-custom.mjs)
+# admin-server.js (kept for reference, but not used in Railway)
+
