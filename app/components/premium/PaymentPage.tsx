@@ -107,23 +107,23 @@ export function PaymentPage({ currentUser, onSuccess, onCancel }: PaymentPagePro
   };
 
   return (
-    <div className="flex-1 flex items-start justify-center p-4 sm:p-6 overflow-y-auto overflow-x-hidden min-h-0" dir={dir}>
-      <Card className="w-full max-w-3xl my-4 sm:my-6">
-        <CardHeader>
-          <div className="flex items-center gap-4 mb-4">
+    <div className="flex-1 flex items-start justify-center p-3 sm:p-4 md:p-6 overflow-y-auto overflow-x-hidden min-h-0" dir={dir}>
+      <Card className="w-full max-w-3xl my-2 sm:my-4 md:my-6">
+        <CardHeader className="p-4 sm:p-6">
+          <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
             <Button
               variant="ghost"
               size="icon"
               onClick={onCancel}
-              className="rounded-full"
+              className="rounded-full h-10 w-10 sm:h-12 sm:w-12 min-h-[44px] min-w-[44px] touch-manipulation"
             >
-              <ArrowLeft className="w-5 h-5" />
+              <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
             </Button>
-            <div className="flex-1">
-              <CardTitle className="text-2xl">
+            <div className="flex-1 min-w-0">
+              <CardTitle className="text-xl sm:text-2xl md:text-3xl">
                 {dir === 'rtl' ? 'إتمام الدفع' : 'Complete Payment'}
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-sm sm:text-base mt-1">
                 {dir === 'rtl' 
                   ? 'اشترك في الدردشة الجماعية المميزة - $30 مدى الحياة'
                   : 'Subscribe to Premium Group Chat - $30 Lifetime'}
@@ -131,126 +131,141 @@ export function PaymentPage({ currentUser, onSuccess, onCancel }: PaymentPagePro
             </div>
           </div>
         </CardHeader>
-        <CardContent className="space-y-6 overflow-visible">
+        <CardContent className="space-y-5 sm:space-y-6 overflow-visible p-4 sm:p-6">
           {/* Payment Summary */}
-          <div className="border-2 border-primary/20 rounded-lg p-4 bg-muted/50">
+          <div className="border-2 border-primary/20 rounded-lg p-4 sm:p-5 bg-muted/50">
             <div className="flex justify-between items-center mb-2">
-              <span className="font-semibold">{dir === 'rtl' ? 'الاشتراك المميز' : 'Premium Subscription'}</span>
-              <span className="text-2xl font-bold text-primary">$30</span>
+              <span className="font-semibold text-sm sm:text-base">{dir === 'rtl' ? 'الاشتراك المميز' : 'Premium Subscription'}</span>
+              <span className="text-2xl sm:text-3xl font-bold text-primary">$30</span>
             </div>
-            <div className="text-sm text-muted-foreground">
+            <div className="text-xs sm:text-sm text-muted-foreground">
               {dir === 'rtl' ? 'دفعة واحدة - اشتراك مدى الحياة' : 'One-time payment - Lifetime access'}
             </div>
           </div>
 
           {/* Payment Method Selection */}
-          <div className="space-y-4">
-            <Label>{dir === 'rtl' ? 'طريقة الدفع' : 'Payment Method'}</Label>
-            <div className="grid grid-cols-3 gap-3">
+          <div className="space-y-3 sm:space-y-4">
+            <Label className="text-sm sm:text-base">{dir === 'rtl' ? 'طريقة الدفع' : 'Payment Method'}</Label>
+            <div className="grid grid-cols-3 gap-2 sm:gap-3">
               <Button
                 type="button"
                 variant={paymentMethod === 'card' ? 'default' : 'outline'}
                 onClick={() => setPaymentMethod('card')}
                 className={cn(
-                  'h-auto py-4 flex flex-col items-center gap-2',
-                  paymentMethod === 'card' && 'ring-2 ring-primary'
+                  'h-auto py-4 sm:py-5 flex flex-col items-center gap-2 min-h-[80px] sm:min-h-[90px]',
+                  paymentMethod === 'card' && 'ring-2 ring-primary',
+                  'touch-manipulation'
                 )}
               >
-                <CreditCard className="w-6 h-6" />
-                <span className="text-xs font-medium">{dir === 'rtl' ? 'بطاقة ائتمان' : 'Credit Card'}</span>
+                <CreditCard className="w-5 h-5 sm:w-6 sm:h-6" />
+                <span className="text-[10px] sm:text-xs font-medium text-center px-1">{dir === 'rtl' ? 'بطاقة ائتمان' : 'Credit Card'}</span>
               </Button>
               <Button
                 type="button"
                 variant={paymentMethod === 'paypal' ? 'default' : 'outline'}
                 onClick={() => setPaymentMethod('paypal')}
                 className={cn(
-                  'h-auto py-4 flex flex-col items-center gap-2',
-                  paymentMethod === 'paypal' && 'ring-2 ring-primary'
+                  'h-auto py-4 sm:py-5 flex flex-col items-center gap-2 min-h-[80px] sm:min-h-[90px]',
+                  paymentMethod === 'paypal' && 'ring-2 ring-primary',
+                  'touch-manipulation'
                 )}
               >
-                <Lock className="w-6 h-6" />
-                <span className="text-xs font-medium">PayPal</span>
+                <Lock className="w-5 h-5 sm:w-6 sm:h-6" />
+                <span className="text-[10px] sm:text-xs font-medium text-center px-1">PayPal</span>
               </Button>
               <Button
                 type="button"
                 variant={paymentMethod === 'bank_transfer' ? 'default' : 'outline'}
                 onClick={() => setPaymentMethod('bank_transfer')}
                 className={cn(
-                  'h-auto py-4 flex flex-col items-center gap-2',
-                  paymentMethod === 'bank_transfer' && 'ring-2 ring-primary'
+                  'h-auto py-4 sm:py-5 flex flex-col items-center gap-2 min-h-[80px] sm:min-h-[90px]',
+                  paymentMethod === 'bank_transfer' && 'ring-2 ring-primary',
+                  'touch-manipulation'
                 )}
               >
-                <Building2 className="w-6 h-6" />
-                <span className="text-xs font-medium">{dir === 'rtl' ? 'تحويل بنكي' : 'Bank Transfer'}</span>
+                <Building2 className="w-5 h-5 sm:w-6 sm:h-6" />
+                <span className="text-[10px] sm:text-xs font-medium text-center px-1">{dir === 'rtl' ? 'تحويل بنكي' : 'Bank Transfer'}</span>
               </Button>
             </div>
           </div>
 
           {/* Card Payment Form */}
           {paymentMethod === 'card' && (
-            <div className="space-y-4">
+            <div className="space-y-4 sm:space-y-5">
               <div className="space-y-2">
-                <Label htmlFor="cardNumber">{dir === 'rtl' ? 'رقم البطاقة' : 'Card Number'}</Label>
+                <Label htmlFor="cardNumber" className="text-sm sm:text-base">{dir === 'rtl' ? 'رقم البطاقة' : 'Card Number'}</Label>
                 <Input
                   id="cardNumber"
                   placeholder={dir === 'rtl' ? '1234 5678 9012 3456' : '1234 5678 9012 3456'}
                   value={cardNumber}
                   onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
                   maxLength={19}
-                  className={errors.cardNumber ? 'border-red-500' : ''}
+                  className={cn(
+                    errors.cardNumber ? 'border-red-500' : '',
+                    "h-12 sm:h-14 text-base"
+                  )}
                   dir="ltr"
                 />
                 {errors.cardNumber && (
-                  <p className="text-sm text-red-500">{errors.cardNumber}</p>
+                  <p className="text-xs sm:text-sm text-red-500">{errors.cardNumber}</p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="cardName">{dir === 'rtl' ? 'اسم حامل البطاقة' : 'Cardholder Name'}</Label>
+                <Label htmlFor="cardName" className="text-sm sm:text-base">{dir === 'rtl' ? 'اسم حامل البطاقة' : 'Cardholder Name'}</Label>
                 <Input
                   id="cardName"
                   placeholder={dir === 'rtl' ? 'اسم حامل البطاقة' : 'Cardholder Name'}
                   value={cardName}
                   onChange={(e) => setCardName(e.target.value)}
-                  className={errors.cardName ? 'border-red-500' : ''}
+                  className={cn(
+                    errors.cardName ? 'border-red-500' : '',
+                    "h-12 sm:h-14 text-base"
+                  )}
                   dir={dir}
                 />
                 {errors.cardName && (
-                  <p className="text-sm text-red-500">{errors.cardName}</p>
+                  <p className="text-xs sm:text-sm text-red-500">{errors.cardName}</p>
                 )}
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="expiryDate">{dir === 'rtl' ? 'تاريخ الانتهاء' : 'Expiry Date'}</Label>
+                  <Label htmlFor="expiryDate" className="text-sm sm:text-base">{dir === 'rtl' ? 'تاريخ الانتهاء' : 'Expiry Date'}</Label>
                   <Input
                     id="expiryDate"
                     placeholder="MM/YY"
                     value={expiryDate}
                     onChange={(e) => setExpiryDate(formatExpiryDate(e.target.value))}
                     maxLength={5}
-                    className={errors.expiryDate ? 'border-red-500' : ''}
+                    className={cn(
+                      errors.expiryDate ? 'border-red-500' : '',
+                      "h-12 sm:h-14 text-base"
+                    )}
                     dir="ltr"
                   />
                   {errors.expiryDate && (
-                    <p className="text-sm text-red-500">{errors.expiryDate}</p>
+                    <p className="text-xs sm:text-sm text-red-500">{errors.expiryDate}</p>
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="cvv">{dir === 'rtl' ? 'CVV' : 'CVV'}</Label>
+                  <Label htmlFor="cvv" className="text-sm sm:text-base">{dir === 'rtl' ? 'CVV' : 'CVV'}</Label>
                   <Input
                     id="cvv"
                     placeholder="123"
                     value={cvv}
                     onChange={(e) => setCvv(e.target.value.replace(/\D/g, '').substring(0, 3))}
                     maxLength={3}
-                    className={errors.cvv ? 'border-red-500' : ''}
+                    className={cn(
+                      errors.cvv ? 'border-red-500' : '',
+                      "h-12 sm:h-14 text-base"
+                    )}
                     type="password"
                     dir="ltr"
                   />
                   {errors.cvv && (
-                    <p className="text-sm text-red-500">{errors.cvv}</p>
+                    <p className="text-xs sm:text-sm text-red-500">{errors.cvv}</p>
                   )}
                 </div>
               </div>
@@ -393,12 +408,12 @@ export function PaymentPage({ currentUser, onSuccess, onCancel }: PaymentPagePro
             </p>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex gap-4 pt-4">
+          {/* Action Buttons - Better mobile layout */}
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4 sm:pt-6">
             <Button
               variant="outline"
               onClick={onCancel}
-              className="flex-1"
+              className="flex-1 h-12 sm:h-14 text-base sm:text-lg min-h-[48px] touch-manipulation"
               disabled={isProcessing}
             >
               {dir === 'rtl' ? 'إلغاء' : 'Cancel'}
@@ -406,7 +421,7 @@ export function PaymentPage({ currentUser, onSuccess, onCancel }: PaymentPagePro
             <Button
               onClick={handlePayment}
               disabled={isProcessing}
-              className="flex-1"
+              className="flex-1 h-12 sm:h-14 text-base sm:text-lg min-h-[48px] touch-manipulation"
               style={{
                 background: paymentMethod === 'card' 
                   ? `linear-gradient(135deg, hsl(var(--chat-from)), hsl(var(--chat-to)))`
@@ -417,25 +432,25 @@ export function PaymentPage({ currentUser, onSuccess, onCancel }: PaymentPagePro
             >
               {isProcessing ? (
                 <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                  {dir === 'rtl' ? 'جاري المعالجة...' : 'Processing...'}
+                  <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                  <span className="text-sm sm:text-base">{dir === 'rtl' ? 'جاري المعالجة...' : 'Processing...'}</span>
                 </>
               ) : (
                 <>
                   {paymentMethod === 'bank_transfer' ? (
                     <>
-                      <Building2 className="w-4 h-4 mr-2" />
-                      {dir === 'rtl' ? 'تأكيد التحويل' : 'Confirm Transfer'}
+                      <Building2 className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                      <span className="text-sm sm:text-base">{dir === 'rtl' ? 'تأكيد التحويل' : 'Confirm Transfer'}</span>
                     </>
                   ) : paymentMethod === 'paypal' ? (
                     <>
-                      <Lock className="w-4 h-4 mr-2" />
-                      {dir === 'rtl' ? 'الدفع عبر PayPal' : 'Pay with PayPal'}
+                      <Lock className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                      <span className="text-sm sm:text-base">{dir === 'rtl' ? 'الدفع عبر PayPal' : 'Pay with PayPal'}</span>
                     </>
                   ) : (
                     <>
-                      <Lock className="w-4 h-4 mr-2" />
-                      {dir === 'rtl' ? 'دفع $30' : 'Pay $30'}
+                      <Lock className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                      <span className="text-sm sm:text-base">{dir === 'rtl' ? 'دفع $30' : 'Pay $30'}</span>
                     </>
                   )}
                 </>
