@@ -201,7 +201,7 @@ export function PhoneLogin({ onLoginSuccess }: PhoneLoginProps) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-white" dir={dir}>
+    <div className="min-h-screen flex items-center justify-center p-3 sm:p-4 relative overflow-hidden bg-white" dir={dir}>
       {/* Real Animated Background Canvas */}
       <canvas
         ref={canvasRef}
@@ -214,12 +214,12 @@ export function PhoneLogin({ onLoginSuccess }: PhoneLoginProps) {
 
       {/* Main Content */}
       <Card className="relative z-10 w-full max-w-md border-2 border-yellow-200 bg-white shadow-xl">
-        <CardContent className="p-10">
+        <CardContent className="p-4 sm:p-6 md:p-10">
           {/* Elegant Crown Header */}
-          <div className="flex flex-col items-center mb-8">
-            <div className="relative mb-6">
+          <div className="flex flex-col items-center mb-4 sm:mb-6 md:mb-8">
+            <div className="relative mb-3 sm:mb-4 md:mb-6">
               <Crown 
-                className="w-20 h-20 text-yellow-500"
+                className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 text-yellow-500"
                 style={{
                   filter: 'drop-shadow(0 4px 12px rgba(255, 215, 0, 0.4))',
                   animation: 'gentleFloat 4s ease-in-out infinite'
@@ -228,14 +228,14 @@ export function PhoneLogin({ onLoginSuccess }: PhoneLoginProps) {
             </div>
 
             {/* App Title - Clean and Elegant */}
-            <h1 className="text-4xl font-bold mb-2 text-gray-900" style={{
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-1 sm:mb-2 text-gray-900" style={{
               letterSpacing: '0.05em',
               textShadow: '0 2px 4px rgba(0, 0, 0, 0.05)'
             }}>
               ROYAL CHAT
             </h1>
-            <div className="h-1 w-20 bg-gradient-to-r from-transparent via-yellow-500 to-transparent mb-4" />
-            <p className="text-base font-medium text-gray-600">
+            <div className="h-0.5 sm:h-1 w-16 sm:w-20 bg-gradient-to-r from-transparent via-yellow-500 to-transparent mb-2 sm:mb-3 md:mb-4" />
+            <p className="text-sm sm:text-base font-medium text-gray-600">
               {dir === 'rtl' 
                 ? 'تطبيق الدردشة المميز' 
                 : 'Premium Chat Application'}
@@ -244,10 +244,10 @@ export function PhoneLogin({ onLoginSuccess }: PhoneLoginProps) {
 
           {/* Login Form */}
           {!isSuccess ? (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-3">
-                <label htmlFor="phone" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <Phone className="w-4 h-4 text-yellow-600" />
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5 md:space-y-6">
+              <div className="space-y-2 sm:space-y-3">
+                <label htmlFor="phone" className="text-xs sm:text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-yellow-600" />
                   {dir === 'rtl' ? 'رقم الهاتف' : 'Phone Number'}
                 </label>
                 <div className="flex gap-2">
@@ -263,17 +263,18 @@ export function PhoneLogin({ onLoginSuccess }: PhoneLoginProps) {
                   >
                     <SelectTrigger 
                       className={cn(
-                        "w-[140px] h-14 border-2 transition-all duration-200",
+                        "w-[120px] sm:w-[140px] h-12 sm:h-14 border-2 transition-all duration-200",
                         "focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20",
                         error ? "border-red-400 focus:border-red-500 focus:ring-red-500/20" : "border-gray-300",
-                        "bg-white font-medium hover:border-yellow-400"
+                        "bg-white font-medium hover:border-yellow-400",
+                        "text-sm sm:text-base"
                       )}
                       dir={dir}
                     >
                       <SelectValue>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xl">{selectedCountry.flag}</span>
-                          <span className="text-sm font-semibold text-gray-900">{selectedCountry.code}</span>
+                        <div className="flex items-center gap-1.5 sm:gap-2">
+                          <span className="text-lg sm:text-xl">{selectedCountry.flag}</span>
+                          <span className="text-xs sm:text-sm font-semibold text-gray-900">{selectedCountry.code}</span>
                         </div>
                       </SelectValue>
                     </SelectTrigger>
@@ -303,12 +304,13 @@ export function PhoneLogin({ onLoginSuccess }: PhoneLoginProps) {
                       onChange={handlePhoneChange}
                       placeholder={dir === 'rtl' ? 'أدخل رقم الهاتف' : 'Enter phone number'}
                       className={cn(
-                        "text-base h-14 border-2 transition-all duration-200",
+                        "text-sm sm:text-base h-12 sm:h-14 border-2 transition-all duration-200",
                         "focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20",
                         error ? "border-red-400 focus:border-red-500 focus:ring-red-500/20" : "border-gray-300",
                         "bg-white font-medium text-gray-900",
                         "placeholder:text-gray-400",
-                        "hover:border-yellow-400"
+                        "hover:border-yellow-400",
+                        "px-3 sm:px-4"
                       )}
                       dir="ltr"
                       disabled={isLoading}
@@ -316,12 +318,12 @@ export function PhoneLogin({ onLoginSuccess }: PhoneLoginProps) {
                   </div>
                 </div>
                 {error && (
-                  <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
-                    <span className="text-red-500 text-sm">⚠</span>
-                    <p className="text-sm font-medium text-red-600">{error}</p>
+                  <div className="flex items-center gap-2 p-2 sm:p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <span className="text-red-500 text-xs sm:text-sm">⚠</span>
+                    <p className="text-xs sm:text-sm font-medium text-red-600">{error}</p>
                   </div>
                 )}
-                <p className="text-xs text-gray-500 text-center">
+                <p className="text-[10px] sm:text-xs text-gray-500 text-center px-2">
                   {dir === 'rtl' 
                     ? 'أدخل أي رقم للدخول (حالياً بدون قيود)' 
                     : 'Enter any number to login (currently no restrictions)'}
@@ -332,35 +334,36 @@ export function PhoneLogin({ onLoginSuccess }: PhoneLoginProps) {
                 type="submit"
                 disabled={isLoading || !phoneNumber}
                 className={cn(
-                  "w-full h-14 text-base font-semibold rounded-lg shadow-md",
+                  "w-full h-12 sm:h-14 text-sm sm:text-base font-semibold rounded-lg shadow-md",
                   "bg-gradient-to-r from-yellow-500 to-amber-500",
                   "hover:from-yellow-600 hover:to-amber-600",
                   "text-white transition-all duration-200",
                   "hover:shadow-lg hover:shadow-yellow-500/30",
                   "disabled:opacity-50 disabled:cursor-not-allowed",
-                  "relative overflow-hidden"
+                  "relative overflow-hidden",
+                  "min-h-[44px] touch-manipulation"
                 )}
               >
                 {isLoading ? (
                   <span className="flex items-center justify-center gap-2">
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    {dir === 'rtl' ? 'جاري الدخول...' : 'Logging in...'}
+                    <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
+                    <span className="text-sm sm:text-base">{dir === 'rtl' ? 'جاري الدخول...' : 'Logging in...'}</span>
                   </span>
                 ) : (
                   <span className="flex items-center justify-center gap-2">
-                    {dir === 'rtl' ? 'دخول' : 'Login'}
-                    <ArrowRight className={cn("w-5 h-5", dir === 'rtl' && "rotate-180")} />
+                    <span className="text-sm sm:text-base">{dir === 'rtl' ? 'دخول' : 'Login'}</span>
+                    <ArrowRight className={cn("w-4 h-4 sm:w-5 sm:h-5", dir === 'rtl' && "rotate-180")} />
                   </span>
                 )}
               </Button>
             </form>
           ) : (
-            <div className="flex flex-col items-center justify-center py-12 space-y-6">
-              <CheckCircle2 className="w-16 h-16 text-green-500 animate-scale-in" />
-              <h3 className="text-xl font-bold text-center text-gray-900">
+            <div className="flex flex-col items-center justify-center py-8 sm:py-12 space-y-4 sm:space-y-6">
+              <CheckCircle2 className="w-12 h-12 sm:w-16 sm:h-16 text-green-500 animate-scale-in" />
+              <h3 className="text-lg sm:text-xl font-bold text-center text-gray-900">
                 {dir === 'rtl' ? 'تم الدخول بنجاح!' : 'Login Successful!'}
               </h3>
-              <p className="text-sm text-gray-600 text-center">
+              <p className="text-xs sm:text-sm text-gray-600 text-center">
                 {dir === 'rtl' ? 'جاري التوجيه...' : 'Redirecting...'}
               </p>
             </div>
