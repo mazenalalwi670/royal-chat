@@ -47,6 +47,10 @@ export function VoiceRecorder({ onRecordingComplete, onCancel }: VoiceRecorderPr
     try {
       // Check if getUserMedia is supported
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        const errorMsg = dir === 'rtl' 
+          ? 'الميكروفون غير مدعوم في متصفحك. يرجى استخدام متصفح حديث مثل Chrome أو Firefox.'
+          : 'Microphone is not supported in your browser. Please use a modern browser like Chrome or Firefox.';
+        alert(errorMsg);
         throw new Error('getUserMedia is not supported');
       }
 
@@ -58,14 +62,31 @@ export function VoiceRecorder({ onRecordingComplete, onCancel }: VoiceRecorderPr
           autoGainControl: true,
           sampleRate: 44100,
           channelCount: 1,
-          // Android specific constraints
-          latency: 0.01,
-          googEchoCancellation: true,
-          googNoiseSuppression: true,
-          googAutoGainControl: true
+          // Android specific constraints (may not be supported in all browsers)
+          ...(navigator.userAgent.includes('Android') && {
+            latency: 0.01,
+            googEchoCancellation: true,
+            googNoiseSuppression: true,
+            googAutoGainControl: true
+          })
         } 
       }).catch((error) => {
         console.error('Error accessing microphone:', error);
+        let errorMsg = dir === 'rtl' 
+          ? 'خطأ في الوصول إلى الميكروفون. يرجى التحقق من أذونات الميكروفون في إعدادات المتصفح.'
+          : 'Error accessing microphone. Please check microphone permissions in browser settings.';
+        
+        if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+          errorMsg = dir === 'rtl'
+            ? 'تم رفض الوصول إلى الميكروفون. يرجى السماح بالوصول في إعدادات المتصفح.'
+            : 'Microphone access denied. Please allow microphone access in browser settings.';
+        } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
+          errorMsg = dir === 'rtl'
+            ? 'لم يتم العثور على ميكروفون. يرجى التأكد من وجود ميكروفون متصل.'
+            : 'No microphone found. Please ensure a microphone is connected.';
+        }
+        
+        alert(errorMsg);
         throw error;
       });
       
@@ -184,7 +205,7 @@ export function VoiceRecorder({ onRecordingComplete, onCancel }: VoiceRecorderPr
       }, 1000);
     } catch (error) {
       console.error('Error accessing microphone:', error);
-      alert(dir === 'rtl' ? 'خطأ في الوصول إلى الميكروفون' : 'Error accessing microphone');
+      // Error message already shown in getUserMedia catch block
       onCancel?.();
     }
   };

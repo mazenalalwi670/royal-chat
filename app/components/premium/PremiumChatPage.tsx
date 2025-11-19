@@ -192,8 +192,8 @@ export function PremiumChatPage({ currentUser }: PremiumChatPageProps) {
 
   // Show subscription page if not subscribed
   return (
-    <div className="flex-1 flex items-start sm:items-center justify-center p-4 sm:p-6 overflow-y-auto" dir={dir}>
-      <Card className="w-full max-w-2xl my-4 sm:my-6">
+    <div className="flex-1 flex items-start sm:items-center justify-center p-4 sm:p-6 overflow-y-auto animate-fade-in-scale" dir={dir}>
+      <Card className="w-full max-w-2xl my-4 sm:my-6 animate-slide-in-up">
         <CardHeader className="text-center p-4 sm:p-6">
           <div className="flex justify-center mb-4 sm:mb-6">
             <div className="relative">
@@ -263,16 +263,16 @@ export function PremiumChatPage({ currentUser }: PremiumChatPageProps) {
             </div>
           </div>
 
-          {/* Subscribe Button - Full width, larger on mobile */}
+          {/* Subscribe Button - Full width, larger on mobile with animation */}
           <div className="pt-2 sm:pt-4">
             <Button
               onClick={() => setShowPayment(true)}
-              className="w-full h-14 sm:h-16 text-base sm:text-lg font-semibold rounded-lg shadow-lg min-h-[56px] touch-manipulation"
+              className="w-full h-14 sm:h-16 text-base sm:text-lg font-semibold rounded-lg shadow-lg min-h-[56px] touch-manipulation transition-all duration-300 hover:scale-105 active:scale-95 animate-pulse-glow"
               style={{
                 background: `linear-gradient(135deg, hsl(var(--chat-from)), hsl(var(--chat-to)))`
               }}
             >
-              <Crown className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
+              <Crown className="w-5 h-5 sm:w-6 sm:h-6 mr-2 animate-bounce-slow" />
               {dir === 'rtl' ? 'اشترك الآن - $30' : 'Subscribe Now - $30'}
             </Button>
           </div>

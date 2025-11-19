@@ -38,7 +38,7 @@ export function ConversationsList({ conversations, selectedId, onSelect }: Conve
   };
 
   return (
-    <Card className="flex flex-col h-full border-r rounded-none" dir={dir}>
+    <Card className="flex flex-col h-full border-r rounded-none sm:border-r border-0" dir={dir}>
       <div className="p-4 border-b space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">

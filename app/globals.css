@@ -539,6 +539,50 @@
     animation: slideInUp 0.4s ease-out;
   }
 
+  /* Enhanced Mobile Animations for Premium Chat */
+  @keyframes slideInUpMobile {
+    from {
+      opacity: 0;
+      transform: translateY(15px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes fadeInScaleMobile {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% {
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+    }
+  }
+
+  .animate-slide-in-up-mobile {
+    animation: slideInUpMobile 0.3s ease-out;
+  }
+
+  .animate-fade-in-scale-mobile {
+    animation: fadeInScaleMobile 0.3s ease-out;
+  }
+
+  .animate-pulse-glow {
+    animation: pulseGlow 2s ease-in-out infinite;
+  }
+
   .message-bubble-hover {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }

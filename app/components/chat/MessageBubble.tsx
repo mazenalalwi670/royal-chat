@@ -16,6 +16,7 @@ import {
   PopoverTrigger,
 } from '@/ui/popover';
 import { MoreVertical, Reply, Trash2, Edit, Smile, Copy, Check, CheckCheck, Crown, Image, FileText, MapPin, Play, Download } from 'lucide-react';
+import { VoiceMessagePlayer } from './VoiceMessagePlayer';
 import { Message, User } from '@/types/chat';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -349,31 +350,17 @@ export function MessageBubble({
                           }
                           if (attachment.type === 'audio' || (attachment as any).type === 'voice') {
                             return (
-                              <div key={attachment.id} className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg">
-                                <Button
-                                  type="button"
-                                  size="icon"
-                                  variant="ghost"
-                                  className="rounded-full h-12 w-12 sm:h-10 sm:w-10 touch-manipulation min-h-[44px] min-w-[44px]"
-                                  onClick={() => {
-                                    const audio = new Audio(attachment.url);
-                                    audio.play();
-                                  }}
-                                  style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
-                                >
-                                  <Play className="w-6 h-6 sm:w-5 sm:h-5" />
-                                </Button>
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-xs font-medium truncate">
-                                    {attachment.name || (dir === 'rtl' ? 'رسالة صوتية' : 'Voice Message')}
-                                  </p>
-                                  {attachment.size && (
-                                    <p className="text-[10px] text-muted-foreground">
-                                      {(attachment.size / 1024).toFixed(1)} KB
-                                    </p>
-                                  )}
-                                </div>
-                              </div>
+                              <VoiceMessagePlayer
+                                key={attachment.id}
+                                attachment={{
+                                  id: attachment.id,
+                                  url: attachment.url,
+                                  name: attachment.name,
+                                  size: attachment.size,
+                                  data: (attachment as any).data
+                                }}
+                                dir={dir}
+                              />
                             );
                           }
                           if (attachment.type === 'file') {

@@ -1215,10 +1215,10 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
   };
 
   return (
-    <div className="flex-1 flex flex-col sm:flex-row h-full w-full min-w-0 relative overflow-hidden premium-chat-container" dir={dir}>
-      {/* Members List Sidebar - Mobile responsive */}
+    <div className="flex-1 flex flex-col sm:flex-row h-full w-full min-w-0 relative overflow-hidden premium-chat-container animate-fade-in-scale" dir={dir}>
+      {/* Members List Sidebar - Mobile responsive with animations */}
       {showMembersList && (
-        <div className="w-full sm:w-80 fixed sm:relative inset-0 sm:inset-auto z-40 sm:z-30 border-r bg-background animate-slide-in-right touch-manipulation overflow-y-auto">
+        <div className="w-full sm:w-80 fixed sm:relative inset-0 sm:inset-auto z-40 sm:z-30 border-r bg-background/95 backdrop-blur-sm animate-slide-in-right animate-fade-in-scale touch-manipulation overflow-y-auto">
           <PremiumMembersList
             members={members.map((m, index) => ({
               ...m,
@@ -1256,15 +1256,15 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
         {/* Show Royal background by default - only hide if user has explicitly set a custom color/image */}
         {chatBackground.type !== 'image' && (!chatBackground.value || chatBackground.value === '') && (
           <>
-            {/* Royal Crown Icon - Centered and Large */}
+            {/* Royal Crown Icon - Centered and Large - Mobile responsive */}
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none">
               <div className="relative">
-                {/* Crown SVG Icon - Luxurious */}
+                {/* Crown SVG Icon - Luxurious - Mobile responsive size */}
                 <svg 
-                  width="400" 
-                  height="400" 
-                  viewBox="0 0 200 200" 
-                  className="opacity-10 royal-crown"
+                  width="200" 
+                  height="200" 
+                  className="sm:w-[300px] sm:h-[300px] md:w-[400px] md:h-[400px] opacity-10 royal-crown"
+                  viewBox="0 0 200 200"
                   style={{
                     filter: 'drop-shadow(0 0 40px rgba(255, 215, 0, 0.3)) drop-shadow(0 0 80px rgba(255, 215, 0, 0.2))',
                     animation: 'royalPulse 4s ease-in-out infinite'
@@ -1291,13 +1291,13 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
                   />
                 </svg>
                 
-                {/* Royal Text Below Crown */}
-                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-8">
+                {/* Royal Text Below Crown - Mobile responsive */}
+                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-4 sm:mt-6 md:mt-8">
                   <h1 
-                    className="text-6xl sm:text-8xl font-bold royal-text"
+                    className="text-3xl sm:text-5xl md:text-6xl lg:text-8xl font-bold royal-text"
                     style={{
                       fontFamily: 'serif',
-                      letterSpacing: '0.2em',
+                      letterSpacing: '0.1em',
                       textAlign: 'center',
                       animation: 'royalShine 3s linear infinite, royalBlink 4s ease-in-out infinite'
                     }}
@@ -1308,8 +1308,8 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
               </div>
             </div>
 
-            {/* Golden Sparkles - Royal Ambiance */}
-            {Array.from({ length: 50 }).map((_, i) => {
+            {/* Golden Sparkles - Royal Ambiance - Reduced on mobile for performance */}
+            {Array.from({ length: typeof window !== 'undefined' && window.innerWidth < 640 ? 20 : 50 }).map((_, i) => {
               const delay = Math.random() * 4;
               const duration = 3 + Math.random() * 3;
               const size = 2 + Math.random() * 4;
@@ -1425,15 +1425,15 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
         )}
       </div>
 
-      {/* Header - Mobile responsive */}
+      {/* Header - Mobile responsive with better sizing */}
       <Card className="border-b rounded-none premium-header animate-slide-in-down relative z-10 bg-background w-full touch-manipulation">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 sm:p-4 gap-3 sm:gap-2">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-2 sm:p-3 md:p-4 gap-2 sm:gap-3">
           <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 w-full sm:w-auto">
             <div className="relative flex-shrink-0">
               {/* Fancy Frame for Premium Chat Avatar */}
               <div
                 className={cn(
-                  "absolute -inset-1 rounded-full animate-pulse shadow-lg transition-all duration-300",
+                  "absolute -inset-0.5 sm:-inset-1 rounded-full animate-pulse shadow-lg transition-all duration-300",
                   isCurrentUserAdmin && "admin-glow-jewel"
                 )}
                 style={{
@@ -1443,7 +1443,7 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
                 }}
               />
               <Avatar className={cn(
-                "w-12 h-12 sm:w-14 sm:h-14 border-2 sm:border-4 border-background relative z-10 shadow-xl animate-fade-in-scale flex-shrink-0",
+                "w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 border-2 sm:border-3 md:border-4 border-background relative z-10 shadow-xl animate-fade-in-scale flex-shrink-0",
                 isCurrentUserAdmin && "admin-avatar-jewel"
               )}>
                 <AvatarFallback 
@@ -1477,17 +1477,17 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
               )}
             </div>
             <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap mb-1">
-                <h2 className="font-bold text-base sm:text-lg md:text-xl flex items-center gap-1.5 sm:gap-2 animate-gradient min-w-0 truncate" style={{ color: `hsl(var(--primary))` }}>
+              <div className="flex items-center gap-1 sm:gap-1.5 sm:gap-2 flex-wrap mb-0.5 sm:mb-1">
+                <h2 className="font-bold text-sm sm:text-base md:text-lg lg:text-xl flex items-center gap-1 sm:gap-1.5 sm:gap-2 animate-gradient min-w-0 truncate" style={{ color: `hsl(var(--primary))` }}>
                   {isCurrentUserAdmin ? (
                     <div className="relative flex-shrink-0">
-                      <Crown className="w-5 h-5 sm:w-6 sm:h-6 animate-bounce-slow admin-crown-jewel" style={{ color: `#ffd700` }} />
-                      <div className="absolute -inset-1 bg-yellow-400/30 rounded-full blur-md animate-pulse" />
+                      <Crown className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 animate-bounce-slow admin-crown-jewel" style={{ color: `#ffd700` }} />
+                      <div className="absolute -inset-0.5 sm:-inset-1 bg-yellow-400/30 rounded-full blur-md animate-pulse" />
                     </div>
                   ) : (
-                    <Crown className="w-4 h-4 sm:w-5 sm:h-5 animate-bounce-slow flex-shrink-0" />
+                    <Crown className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 animate-bounce-slow flex-shrink-0" />
                   )}
-                  <span className="truncate text-sm sm:text-base md:text-lg">{dir === 'rtl' ? `الدردشة المميزة` : `Premium Chat`}</span>
+                  <span className="truncate text-xs sm:text-sm md:text-base lg:text-lg">{dir === 'rtl' ? `الدردشة المميزة` : `Premium Chat`}</span>
                 </h2>
                 {isCurrentUserAdmin && (
                   <Badge variant="secondary" className="bg-yellow-500/20 text-yellow-600 border-yellow-500/30 animate-pulse admin-badge-jewel text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 min-h-[20px]">
@@ -1499,16 +1499,18 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
                   {dir === 'rtl' ? 'حصري' : 'Exclusive'}
                 </Badge>
               </div>
-              <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm text-muted-foreground flex-wrap">
+              <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 text-[10px] sm:text-xs md:text-sm text-muted-foreground flex-wrap">
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
                   onClick={() => setShowMembersList(!showMembersList)}
-                  className="h-8 sm:h-9 px-2 sm:px-3 hover:bg-primary/10 text-xs sm:text-sm min-h-[32px] touch-manipulation"
+                  className="h-9 sm:h-8 md:h-9 px-2 sm:px-2 md:px-3 hover:bg-primary/10 text-xs sm:text-xs md:text-sm min-h-[44px] sm:min-h-[32px] touch-manipulation active:scale-95"
+                  style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
                 >
-                  <UsersRound className="w-4 h-4 sm:w-5 sm:h-5 sm:mr-1.5" />
-                  <span>{members.length} {dir === 'rtl' ? 'مشترك' : 'members'}</span>
+                  <UsersRound className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 sm:mr-1 md:mr-1.5" />
+                  <span className="hidden xs:inline">{members.length} {dir === 'rtl' ? 'مشترك' : 'members'}</span>
+                  <span className="xs:hidden">{members.length}</span>
                 </Button>
                 {isVoiceChatActive && (
                   <Badge variant="secondary" className="bg-green-500/10 text-green-600 border-green-500/20 animate-slide-in-up text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 min-h-[20px]">
@@ -1525,7 +1527,7 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2 sm:gap-2 flex-wrap w-full sm:w-auto justify-end">
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap w-full sm:w-auto justify-end">
             {isCurrentUserAdmin && (
               <Button
                 type="button"
@@ -1533,20 +1535,21 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
                 variant={isInvisible ? 'secondary' : 'outline'}
                 onClick={toggleInvisibility}
                 className={cn(
-                  'rounded-full transition-all duration-300 hover:scale-110 h-9 sm:h-10 px-3 sm:px-4 min-h-[36px] touch-manipulation',
+                  'rounded-full transition-all duration-300 hover:scale-110 active:scale-95 h-10 sm:h-9 md:h-10 px-3 sm:px-3 md:px-4 min-h-[44px] sm:min-h-[36px] touch-manipulation',
                   isInvisible && 'bg-gray-500/20 border-gray-500/30 shadow-lg'
                 )}
+                style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
                 title={isInvisible ? (dir === 'rtl' ? 'إظهار نفسك' : 'Show yourself') : (dir === 'rtl' ? 'إخفاء نفسك' : 'Hide yourself')}
               >
                 {isInvisible ? (
                   <>
-                    <EyeOff className="w-4 h-4 sm:mr-2" />
-                    <span className="hidden sm:inline">{dir === 'rtl' ? 'إظهار' : 'Show'}</span>
+                    <EyeOff className="w-3.5 h-3.5 sm:w-4 sm:h-4 sm:mr-1.5 md:mr-2" />
+                    <span className="hidden sm:inline text-xs sm:text-sm">{dir === 'rtl' ? 'إظهار' : 'Show'}</span>
                   </>
                 ) : (
                   <>
-                    <Eye className="w-4 h-4 sm:mr-2" />
-                    <span className="hidden sm:inline">{dir === 'rtl' ? 'إخفاء' : 'Hide'}</span>
+                    <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4 sm:mr-1.5 md:mr-2" />
+                    <span className="hidden sm:inline text-xs sm:text-sm">{dir === 'rtl' ? 'إخفاء' : 'Hide'}</span>
                   </>
                 )}
               </Button>
@@ -1562,12 +1565,13 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
               variant="outline"
               onClick={() => setShowSubscriptionOffers(true)}
               className={cn(
-                "rounded-full transition-all duration-300 hover:scale-110 h-9 sm:h-10 w-9 sm:w-10 min-h-[36px] min-w-[36px] touch-manipulation",
+                "rounded-full transition-all duration-300 hover:scale-110 active:scale-95 h-10 sm:h-10 w-10 sm:w-10 min-h-[44px] min-w-[44px] touch-manipulation",
                 "border-yellow-500/30 hover:border-yellow-500 bg-gradient-to-r from-yellow-500/10 to-amber-500/10"
               )}
               title={dir === 'rtl' ? 'عروض الاشتراك' : 'Subscription Offers'}
+              style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
             >
-              <Crown className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-500" />
+              <Crown className="w-5 h-5 sm:w-5 sm:h-5 text-yellow-500" />
             </Button>
             
             <Badge variant="outline" className="border-primary text-primary animate-fade-in-scale text-[10px] sm:text-xs px-2 sm:px-3 py-1 min-h-[28px]">
@@ -1579,28 +1583,33 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
               variant={isVoiceChatActive ? 'default' : 'outline'}
               onClick={handleToggleVoiceChat}
               className={cn(
-                'rounded-full transition-all duration-300 hover:scale-110 h-9 sm:h-10 px-3 sm:px-4 min-h-[36px] touch-manipulation',
-                isVoiceChatActive && 'bg-primary hover:bg-primary/90 shadow-lg'
+                'rounded-full transition-all duration-300 hover:scale-110 active:scale-95 h-10 sm:h-9 md:h-10 px-3 sm:px-3 md:px-4 min-h-[44px] sm:min-h-[36px] touch-manipulation',
+                isVoiceChatActive && 'bg-primary hover:bg-primary/90 shadow-lg animate-pulse'
               )}
               style={
                 isVoiceChatActive
                   ? {
-                      background: `linear-gradient(135deg, hsl(var(--chat-from)), hsl(var(--chat-to)))`
+                      background: `linear-gradient(135deg, hsl(var(--chat-from)), hsl(var(--chat-to)))`,
+                      WebkitTapHighlightColor: 'transparent',
+                      touchAction: 'manipulation'
                     }
-                  : undefined
+                  : {
+                      WebkitTapHighlightColor: 'transparent',
+                      touchAction: 'manipulation'
+                    }
               }
             >
-              <Mic className="w-4 h-4 sm:w-5 sm:h-5 sm:mr-2" />
-              <span className="hidden sm:inline">{isVoiceChatActive ? (dir === 'rtl' ? 'خروج' : 'Leave') : (dir === 'rtl' ? 'دخول صوتي' : 'Join Voice')}</span>
-              <span className="sm:hidden">{isVoiceChatActive ? (dir === 'rtl' ? 'خروج' : 'Leave') : (dir === 'rtl' ? 'صوتي' : 'Voice')}</span>
+              <Mic className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 sm:mr-1.5 md:mr-2" />
+              <span className="hidden sm:inline text-xs sm:text-sm">{isVoiceChatActive ? (dir === 'rtl' ? 'خروج' : 'Leave') : (dir === 'rtl' ? 'دخول صوتي' : 'Join Voice')}</span>
+              <span className="sm:hidden text-xs">{isVoiceChatActive ? (dir === 'rtl' ? 'خروج' : 'Leave') : (dir === 'rtl' ? 'صوتي' : 'Voice')}</span>
             </Button>
           </div>
         </div>
       </Card>
 
-      {/* Voice Chat Bar */}
+      {/* Voice Chat Bar - Mobile responsive with animations */}
       {isVoiceChatActive && (
-        <div className="animate-slide-in-down">
+        <div className="animate-slide-in-down animate-fade-in-scale">
           <VoiceChatBar
             participants={members.filter(m => !(isCurrentUserAdmin && isInvisible && m.id === currentUser.id))}
             currentUser={currentUser}
@@ -1615,7 +1624,7 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
 
       {/* Royal Frames Showcase - Modern Luxury Replacement - Mobile responsive */}
       {showSubscriptionOffers && (
-        <div className="px-2 sm:px-4 pt-2 sm:pt-4 pb-4 animate-slide-in-down relative z-20 w-full max-w-full overflow-visible">
+        <div className="px-2 sm:px-4 pt-2 sm:pt-4 pb-4 animate-slide-in-down relative z-20 w-full max-w-full overflow-visible animate-fade-in-scale">
           <RoyalFramesShowcase
             onSelectFrame={(frameConfig) => {
               // Save frame selection
@@ -1704,7 +1713,7 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
 
       {/* Royal Name Bar - Luxury Premium Names Display - Mobile responsive */}
       {!showSubscriptionOffers && members.length > 0 && (
-        <div className="px-0 relative z-20 w-full">
+        <div className="px-0 sm:px-2 relative z-20 w-full animate-slide-in-down">
           <RoyalNameBar 
             users={members.map(m => ({
               ...m,
@@ -1726,9 +1735,9 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
         </div>
       )}
 
-      {/* Welcome Banner */}
+      {/* Welcome Banner - Mobile responsive */}
       {showWelcomeBanner && !currentAd && (
-        <div className="px-4 pt-4 animate-slide-in-down">
+        <div className="px-2 sm:px-4 pt-2 sm:pt-4 animate-slide-in-down animate-fade-in-scale">
           <WelcomeBanner
             userName={displayUser.name}
             memberCount={members.length}
@@ -1737,17 +1746,17 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
         </div>
       )}
 
-      {/* Messages - Mobile responsive */}
+      {/* Messages - Mobile responsive with better sizing */}
       <ScrollArea 
-        className="flex-1 p-3 sm:p-4 relative z-10 w-full min-w-0 touch-pan-y"
+        className="flex-1 p-2 sm:p-3 md:p-4 relative z-10 w-full min-w-0 touch-pan-y"
         style={{
-          maxHeight: 'calc(100dvh - 320px)',
-          height: 'calc(100dvh - 320px)',
+          maxHeight: 'calc(100dvh - 240px)',
+          height: 'calc(100dvh - 240px)',
           WebkitOverflowScrolling: 'touch',
           touchAction: 'pan-y pinch-zoom'
         }}
       >
-        <div className="space-y-3 sm:space-y-4 pb-6 min-w-0">
+        <div className="space-y-2 sm:space-y-3 md:space-y-4 pb-4 sm:pb-6 min-w-0">
           {messages.map((message, index) => {
             const sender = members.find(m => m.id === message.senderId) || { ...displayUser, isPremiumSubscriber: true };
             const isCurrentUser = message.senderId === displayUser.id;
@@ -1759,11 +1768,13 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
                 key={message.id}
                 className={cn(
                   "message-enter message-bubble-hover premium-message-wrapper",
-                  "transform transition-all duration-500 ease-out",
-                  "hover:scale-[1.02] hover:shadow-xl"
+                  "transform transition-all duration-300 ease-out",
+                  "hover:scale-[1.01] sm:hover:scale-[1.02] hover:shadow-lg sm:hover:shadow-xl",
+                  "animate-slide-in-up"
                 )}
                 style={{
-                  animationDelay: `${Math.min(index * 0.05, 0.5)}s`
+                  animationDelay: `${Math.min(index * 0.03, 0.3)}s`,
+                  animationFillMode: 'both'
                 }}
               >
                 <div className={cn(
@@ -1797,11 +1808,12 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
       </ScrollArea>
 
 
-      {/* Message Input - Mobile responsive */}
+      {/* Message Input - Mobile responsive with animations */}
       <div 
-        className="relative z-10 bg-background border-t border-border w-full touch-manipulation"
+        className="relative z-10 bg-background/95 backdrop-blur-sm border-t border-border w-full touch-manipulation animate-slide-in-up"
         style={{
-          paddingBottom: 'env(safe-area-inset-bottom)'
+          paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))',
+          paddingTop: '0.5rem'
         }}
       >
         <MessageInput

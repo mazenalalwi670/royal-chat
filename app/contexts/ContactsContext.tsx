@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useWebSocket } from './WebSocketContext';
 import { useUser } from './UserContext';
+import { useLanguage } from './LanguageContext';
 
 export interface Contact {
   id: string;
@@ -50,6 +51,7 @@ const USERS_STORAGE_KEY = 'royal_chat_all_users';
 export function ContactsProvider({ children }: { children: ReactNode }) {
   const { socket, isConnected } = useWebSocket();
   const { user: currentUser } = useUser();
+  const { dir } = useLanguage();
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [allUsers, setAllUsers] = useState<Contact[]>([]);
   const [phoneContacts, setPhoneContacts] = useState<SyncedContact[]>([]);
@@ -272,48 +274,159 @@ export function ContactsProvider({ children }: { children: ReactNode }) {
 
     setIsSyncing(true);
     try {
-      // Try Contacts API first (if available)
+      let contactsData: PhoneContact[] = [];
+
+      // Method 1: Try Contact Picker API (Chrome/Edge - requires HTTPS)
       if ('contacts' in navigator && 'select' in (navigator.contacts as any)) {
         try {
-          // Use Contacts API (Chrome/Edge - requires HTTPS)
           const contacts = await (navigator.contacts as any).select(['name', 'tel'], { multiple: true });
           if (contacts && contacts.length > 0) {
-            await processPhoneContacts(contacts.map((c: any) => ({
-              name: c.name?.[0] || '',
+            contactsData = contacts.map((c: any) => ({
+              name: c.name?.[0] || 'Unknown',
               phoneNumber: c.tel?.[0] || '',
               phoneNumbers: c.tel || []
-            })));
-            return;
+            })).filter((c: PhoneContact) => c.phoneNumber);
           }
         } catch (apiError: any) {
-          console.log('Contacts API not available or denied:', apiError);
+          console.log('Contact Picker API not available or denied:', apiError);
         }
       }
 
-      // Fallback: Manual entry option
-      const useManual = confirm(
-        'Contacts API is not available in this browser.\n\n' +
-        'Would you like to manually enter contacts?\n\n' +
-        'Click OK to enter manually, or Cancel to skip.'
-      );
+      // Method 2: Try Web Share API with contacts (if available)
+      if (contactsData.length === 0 && 'share' in navigator) {
+        try {
+          // This is a fallback - Web Share doesn't directly access contacts
+          // But we can try to use it if Contact Picker fails
+          console.log('Web Share API available but cannot directly access contacts');
+        } catch (error) {
+          console.log('Web Share API error:', error);
+        }
+      }
 
-      if (useManual) {
-        await manualContactEntry();
+      // Method 3: Use file input for vCard import (works on all browsers)
+      if (contactsData.length === 0) {
+        contactsData = await importContactsFromFile();
+      }
+
+      // Method 4: Manual entry as last resort
+      if (contactsData.length === 0) {
+        const useManual = confirm(
+          dir === 'rtl' 
+            ? 'لا يمكن الوصول إلى جهات الاتصال تلقائيًا.\n\nهل تريد إدخال جهات الاتصال يدويًا؟\n\nاضغط OK للإدخال اليدوي، أو Cancel للإلغاء.'
+            : 'Cannot access contacts automatically.\n\nWould you like to manually enter contacts?\n\nClick OK to enter manually, or Cancel to skip.'
+        );
+
+        if (useManual) {
+          await manualContactEntry();
+          return;
+        }
+      }
+
+      // Process the contacts we found
+      if (contactsData.length > 0) {
+        await processPhoneContacts(contactsData);
+        
+        // Show success message
+        alert(
+          dir === 'rtl'
+            ? `تم مزامنة ${contactsData.length} جهة اتصال بنجاح!`
+            : `Successfully synced ${contactsData.length} contacts!`
+        );
+      } else {
+        alert(
+          dir === 'rtl'
+            ? 'لم يتم العثور على جهات اتصال. يرجى المحاولة مرة أخرى أو استخدام الإدخال اليدوي.'
+            : 'No contacts found. Please try again or use manual entry.'
+        );
       }
     } catch (error: any) {
       console.error('Error syncing contacts:', error);
-      alert('Unable to sync contacts. Please try again or use manual entry.');
+      alert(
+        dir === 'rtl'
+          ? `خطأ في المزامنة: ${error.message || 'خطأ غير معروف'}. يرجى المحاولة مرة أخرى.`
+          : `Sync error: ${error.message || 'Unknown error'}. Please try again.`
+      );
     } finally {
       setIsSyncing(false);
     }
   };
 
+  // Import contacts from vCard file
+  const importContactsFromFile = (): Promise<PhoneContact[]> => {
+    return new Promise((resolve) => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.vcf,.vcard,text/vcard';
+      input.style.display = 'none';
+      
+      input.onchange = async (e: any) => {
+        const file = e.target.files?.[0];
+        if (!file) {
+          resolve([]);
+          return;
+        }
+
+        try {
+          const text = await file.text();
+          const contacts = parseVCard(text);
+          resolve(contacts);
+        } catch (error) {
+          console.error('Error parsing vCard:', error);
+          resolve([]);
+        } finally {
+          document.body.removeChild(input);
+        }
+      };
+
+      input.oncancel = () => {
+        resolve([]);
+        document.body.removeChild(input);
+      };
+
+      document.body.appendChild(input);
+      input.click();
+    });
+  };
+
+  // Parse vCard format
+  const parseVCard = (vcardText: string): PhoneContact[] => {
+    const contacts: PhoneContact[] = [];
+    const vcards = vcardText.split(/BEGIN:VCARD/i);
+    
+    for (const vcard of vcards) {
+      if (!vcard.trim()) continue;
+      
+      const nameMatch = vcard.match(/FN:(.+)/i);
+      const telMatches = vcard.matchAll(/TEL[;:]([^:\n]+)?:([^\n]+)/gi);
+      
+      const name = nameMatch ? nameMatch[1].trim() : 'Unknown';
+      const phoneNumbers: string[] = [];
+      
+      for (const telMatch of telMatches) {
+        const phoneNumber = telMatch[2]?.trim();
+        if (phoneNumber) {
+          phoneNumbers.push(phoneNumber);
+        }
+      }
+      
+      if (phoneNumbers.length > 0) {
+        contacts.push({
+          name,
+          phoneNumber: phoneNumbers[0],
+          phoneNumbers
+        });
+      }
+    }
+    
+    return contacts;
+  };
+
   // Manual contact entry (fallback)
   const manualContactEntry = async (): Promise<void> => {
-    const name = prompt('Enter contact name:');
+    const name = prompt(dir === 'rtl' ? 'أدخل اسم جهة الاتصال:' : 'Enter contact name:');
     if (!name) return;
 
-    const phoneNumber = prompt('Enter phone number (with country code, e.g., +967712345678):');
+    const phoneNumber = prompt(dir === 'rtl' ? 'أدخل رقم الهاتف (مع رمز الدولة، مثال: +967712345678):' : 'Enter phone number (with country code, e.g., +967712345678):');
     if (!phoneNumber) return;
 
     // Clean phone number

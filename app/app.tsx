@@ -30,7 +30,8 @@ function App() {
   const { user: loggedInUser, updateUser: updateLoggedInUser } = useUser();
   // Regular user flow only - Admin is handled separately on /admin route
   const [activeTab, setActiveTab] = useState<'chats' | 'contacts' | 'settings' | 'premium'>('chats');
-  const [selectedConversationId, setSelectedConversationId] = useState<string>('conv-1');
+  const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
   const [conversations, setConversations] = useState<Conversation[]>(
     mockConversations.map(conv => toConversation(conv))
   );
@@ -113,11 +114,22 @@ function App() {
     }
   }, [loggedInUser?.name, loggedInUser?.avatar]);
 
-  const selectedConversation = conversations.find(c => c.id === selectedConversationId);
+  // Detect mobile screen size
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640); // sm breakpoint
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
-  const conversationMessages = messages.filter(m => m.conversationId === selectedConversationId);
+  const selectedConversation = selectedConversationId ? conversations.find(c => c.id === selectedConversationId) : null;
+
+  const conversationMessages = selectedConversationId ? messages.filter(m => m.conversationId === selectedConversationId) : [];
 
   const handleSendMessage = (message: string | Omit<Message, 'id' | 'timestamp' | 'status'>) => {
+    if (!selectedConversationId) return;
     // Ensure we have a valid message object
     const newMessage = createMessage(
       typeof message === 'string' ? message : message.content,
@@ -274,20 +286,34 @@ function App() {
     };
   });
 
+  // Handle conversation selection - on mobile, this navigates to chat view
+  const handleSelectConversation = (conversationId: string) => {
+    setSelectedConversationId(conversationId);
+  };
+
+  // Handle back navigation on mobile
+  const handleBackToConversations = () => {
+    setSelectedConversationId(null);
+  };
+
   return (
     <div className="flex h-[100dvh] bg-background overflow-hidden w-full max-w-full touch-pan-y">
-      <Sidebar
-        currentUser={{
-          ...currentUser,
-          status: currentUser.status as 'online' | 'offline' | 'away'
-        }}
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-      />
+      {/* Hide sidebar on mobile when viewing chats */}
+      {!(isMobile && activeTab === 'chats') && (
+        <Sidebar
+          currentUser={{
+            ...currentUser,
+            status: currentUser.status as 'online' | 'offline' | 'away'
+          }}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+        />
+      )}
 
       {activeTab === 'chats' && (
         <>
-          <div className="w-full sm:w-80 flex-shrink-0 hidden sm:block">
+          {/* Conversations List - Show on mobile when no conversation selected, always on desktop */}
+          <div className={`w-full sm:w-80 flex-shrink-0 ${isMobile && selectedConversationId ? 'hidden' : 'block'}`}>
             <ConversationsList
               conversations={conversations.map(conv => ({
                 id: conv.id,
@@ -305,12 +331,13 @@ function App() {
                 pinned: conv.isPinned || false,
                 archived: false
               })) as unknown as import('./types/chat').Conversation[]}
-              selectedId={selectedConversationId}
-              onSelect={setSelectedConversationId}
+              selectedId={selectedConversationId || undefined}
+              onSelect={handleSelectConversation}
             />
           </div>
 
-          <div className="flex-1 min-w-0 overflow-hidden">
+          {/* Chat Interface - Show on mobile when conversation selected, always on desktop if conversation exists */}
+          <div className={`flex-1 min-w-0 overflow-hidden ${isMobile && !selectedConversationId ? 'hidden' : 'block'}`}>
             {selectedConversation ? (
               <ChatInterface
                 conversation={{
@@ -343,7 +370,7 @@ function App() {
                     // Convert the message to our internal format
                     const messageInput: Omit<Message, 'id' | 'timestamp' | 'status'> = {
                       content: msg.content,
-                      conversationId: selectedConversationId,
+                      conversationId: selectedConversationId!,
                       senderId: currentUser.id,
                       replyTo: msg.replyTo || null,
                       reactions: (msg.reactions || []).map(r => ({
@@ -359,6 +386,7 @@ function App() {
                 onEditMessage={handleEditMessage}
                 onDeleteMessage={handleDeleteMessage}
                 onReactToMessage={handleReactToMessage}
+                onBack={isMobile ? handleBackToConversations : undefined}
               />
             ) : (
               <SelectConversationMessage />

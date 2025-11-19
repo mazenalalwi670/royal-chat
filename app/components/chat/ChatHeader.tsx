@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/ui/dropdown-menu';
-import { Search, Phone, Video, MoreVertical, Pin, Archive, Trash2, Users } from 'lucide-react';
+import { Search, Phone, Video, MoreVertical, Pin, Archive, Trash2, Users, ArrowLeft } from 'lucide-react';
 import { Conversation, User } from '@/types/chat';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -20,9 +20,10 @@ import { VideoCall } from './VideoCall';
 interface ChatHeaderProps {
   conversation: Conversation;
   currentUser: User;
+  onBack?: () => void;
 }
 
-export function ChatHeader({ conversation, currentUser }: ChatHeaderProps) {
+export function ChatHeader({ conversation, currentUser, onBack }: ChatHeaderProps) {
   const { t, dir } = useLanguage();
   const [isVoiceCallOpen, setIsVoiceCallOpen] = useState(false);
   const [isVideoCallOpen, setIsVideoCallOpen] = useState(false);
@@ -56,6 +57,20 @@ export function ChatHeader({ conversation, currentUser }: ChatHeaderProps) {
     <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-20" dir={dir}>
       <div className="flex items-center justify-between p-2 sm:p-4 min-w-0">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+          {/* Back button for mobile */}
+          {onBack && (
+            <Button
+              type="button"
+              size="icon"
+              variant="ghost"
+              onClick={onBack}
+              className="rounded-full h-10 w-10 sm:h-9 sm:w-9 touch-manipulation min-h-[44px] min-w-[44px] flex-shrink-0"
+              style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
+              title={dir === 'rtl' ? 'رجوع' : 'Back'}
+            >
+              <ArrowLeft className={`w-5 h-5 sm:w-4 sm:h-4 ${dir === 'rtl' ? 'rotate-180' : ''}`} />
+            </Button>
+          )}
           <div className="relative flex-shrink-0">
             <Avatar className="w-9 h-9 sm:w-10 sm:h-10 border-2 border-background">
               <AvatarImage src={displayAvatar} />

@@ -20,6 +20,7 @@ interface ChatInterfaceProps {
   onEditMessage: (messageId: string, content: string) => void;
   onDeleteMessage: (messageId: string) => void;
   onReactToMessage: (messageId: string, emoji: string) => void;
+  onBack?: () => void;
 }
 
 export function ChatInterface({
@@ -30,6 +31,7 @@ export function ChatInterface({
   onEditMessage,
   onDeleteMessage,
   onReactToMessage,
+  onBack,
 }: ChatInterfaceProps) {
   const { socket } = useWebSocket();
   const { dir } = useLanguage();
@@ -360,7 +362,7 @@ export function ChatInterface({
 
   return (
     <Card className="flex flex-col h-full w-full min-w-0 rounded-none border-0 overflow-hidden" dir={dir}>
-      <ChatHeader conversation={appConversation} currentUser={appUser} />
+      <ChatHeader conversation={appConversation} currentUser={appUser} onBack={onBack} />
 
       <ScrollArea 
         className="flex-1 p-2 sm:p-4 min-h-0 overflow-y-auto touch-manipulation" 

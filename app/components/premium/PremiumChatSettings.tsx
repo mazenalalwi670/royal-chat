@@ -253,23 +253,26 @@ export function PremiumChatSettings() {
                     type="button"
                     size="icon"
                     onClick={() => fileInputRef.current?.click()}
-                    className="absolute bottom-0 right-0 rounded-full w-8 h-8 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg transition-all duration-300 hover:scale-110 z-10"
+                    className="absolute bottom-0 right-0 rounded-full w-10 h-10 sm:w-8 sm:h-8 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg transition-all duration-300 hover:scale-110 active:scale-95 z-10 touch-manipulation min-h-[44px] min-w-[44px] sm:min-h-[32px] sm:min-w-[32px]"
                     style={{
-                      background: `linear-gradient(135deg, hsl(var(--chat-from)), hsl(var(--chat-to)))`
+                      background: `linear-gradient(135deg, hsl(var(--chat-from)), hsl(var(--chat-to)))`,
+                      WebkitTapHighlightColor: 'transparent',
+                      touchAction: 'manipulation'
                     }}
                     title={dir === 'rtl' ? 'تغيير الصورة' : 'Change Photo'}
                   >
-                    <Camera className="w-4 h-4" />
+                    <Camera className="w-5 h-5 sm:w-4 sm:h-4" />
                   </Button>
                   {avatarPreview && (
                     <Button
                       type="button"
                       size="icon"
                       onClick={handleRemoveAvatar}
-                      className="absolute top-0 right-0 rounded-full w-7 h-7 bg-red-500 hover:bg-red-600 shadow-lg transition-all duration-300 hover:scale-110 z-10"
+                      className="absolute top-0 right-0 rounded-full w-9 h-9 sm:w-7 sm:h-7 bg-red-500 hover:bg-red-600 shadow-lg transition-all duration-300 hover:scale-110 active:scale-95 z-10 touch-manipulation min-h-[36px] min-w-[36px] sm:min-h-[28px] sm:min-w-[28px]"
+                      style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
                       title={dir === 'rtl' ? 'إزالة الصورة' : 'Remove Photo'}
                     >
-                      <X className="w-3 h-3" />
+                      <X className="w-4 h-4 sm:w-3 sm:h-3" />
                     </Button>
                   )}
                 </div>
@@ -308,8 +311,8 @@ export function PremiumChatSettings() {
                       }
                     }}
                     className={cn(
-                      "relative p-2 sm:p-4 rounded-lg sm:rounded-xl border-2 transition-all duration-300",
-                      "active:scale-95 sm:hover:scale-105 cursor-pointer",
+                      "relative p-3 sm:p-4 rounded-lg sm:rounded-xl border-2 transition-all duration-300",
+                      "active:scale-95 sm:hover:scale-105 cursor-pointer touch-manipulation min-h-[80px] sm:min-h-[100px]",
                       "transform-gpu overflow-hidden group",
                       styles.bg,
                       isSelected 
@@ -318,7 +321,9 @@ export function PremiumChatSettings() {
                     )}
                     style={{
                       borderColor: isSelected ? scheme.color : undefined,
-                      boxShadow: isSelected ? `0 0 20px ${scheme.color}40` : undefined
+                      boxShadow: isSelected ? `0 0 20px ${scheme.color}40` : undefined,
+                      WebkitTapHighlightColor: 'transparent',
+                      touchAction: 'manipulation'
                     }}
                     title={dir === 'rtl' ? scheme.labelAr : scheme.label}
                   >
@@ -370,7 +375,8 @@ export function PremiumChatSettings() {
                   variant={backgroundType === 'color' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setBackgroundType('color')}
-                  className="flex-1"
+                  className="flex-1 h-10 sm:h-9 min-h-[44px] sm:min-h-[36px] touch-manipulation active:scale-95"
+                  style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
                 >
                   <Palette className="w-4 h-4 mr-2" />
                   {dir === 'rtl' ? 'ألوان' : 'Colors'}
@@ -380,7 +386,8 @@ export function PremiumChatSettings() {
                   variant={backgroundType === 'image' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setBackgroundType('image')}
-                  className="flex-1"
+                  className="flex-1 h-10 sm:h-9 min-h-[44px] sm:min-h-[36px] touch-manipulation active:scale-95"
+                  style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
                 >
                   <ImageIcon className="w-4 h-4 mr-2" />
                   {dir === 'rtl' ? 'صورة' : 'Image'}
@@ -441,13 +448,17 @@ export function PremiumChatSettings() {
                           type="button"
                           onClick={() => handleBackgroundColorSelect(bg.id)}
                           className={cn(
-                            "relative h-16 sm:h-20 rounded-lg border-2 transition-all duration-300 overflow-hidden group touch-none",
+                            "relative h-20 sm:h-20 rounded-lg border-2 transition-all duration-300 overflow-hidden group touch-manipulation min-h-[80px]",
                             "active:scale-95 sm:hover:scale-105 cursor-pointer",
                             selectedBackground === bg.id && backgroundType === 'color'
                               ? "border-primary shadow-lg ring-2 ring-primary/50"
                               : "border-border sm:hover:border-primary/50"
                           )}
-                          style={{ background: bg.gradient }}
+                          style={{ 
+                            background: bg.gradient,
+                            WebkitTapHighlightColor: 'transparent',
+                            touchAction: 'manipulation'
+                          }}
                           title={dir === 'rtl' ? bg.nameAr : bg.name}
                         >
                           {selectedBackground === bg.id && backgroundType === 'color' && (
@@ -470,13 +481,17 @@ export function PremiumChatSettings() {
                         type="button"
                         onClick={() => handleBackgroundColorSelect('royal-black-gold')}
                         className={cn(
-                          "relative h-16 sm:h-20 rounded-lg border-2 transition-all duration-300 overflow-hidden group touch-none",
+                          "relative h-20 sm:h-20 rounded-lg border-2 transition-all duration-300 overflow-hidden group touch-manipulation min-h-[80px]",
                           "active:scale-95 sm:hover:scale-105 cursor-pointer",
                           selectedBackground === 'royal-black-gold' && backgroundType === 'color'
                             ? "border-primary shadow-lg ring-2 ring-primary/50"
                             : "border-border sm:hover:border-primary/50"
                         )}
-                        style={{ background: '#000000' }}
+                        style={{ 
+                          background: '#000000',
+                          WebkitTapHighlightColor: 'transparent',
+                          touchAction: 'manipulation'
+                        }}
                         title={dir === 'rtl' ? 'أسود مع شرارات ذهبية' : 'Black with Golden Sparkles'}
                       >
                         {selectedBackground === 'royal-black-gold' && backgroundType === 'color' && (
@@ -506,13 +521,17 @@ export function PremiumChatSettings() {
                         type="button"
                         onClick={() => handleBackgroundColorSelect('royal-white-gold')}
                         className={cn(
-                          "relative h-16 sm:h-20 rounded-lg border-2 transition-all duration-300 overflow-hidden group touch-none",
+                          "relative h-20 sm:h-20 rounded-lg border-2 transition-all duration-300 overflow-hidden group touch-manipulation min-h-[80px]",
                           "active:scale-95 sm:hover:scale-105 cursor-pointer",
                           selectedBackground === 'royal-white-gold' && backgroundType === 'color'
                             ? "border-primary shadow-lg ring-2 ring-primary/50"
                             : "border-border sm:hover:border-primary/50"
                         )}
-                        style={{ background: '#FFFFFF' }}
+                        style={{ 
+                          background: '#FFFFFF',
+                          WebkitTapHighlightColor: 'transparent',
+                          touchAction: 'manipulation'
+                        }}
                         title={dir === 'rtl' ? 'أبيض مع شرارات ذهبية' : 'White with Golden Sparkles'}
                       >
                         {selectedBackground === 'royal-white-gold' && backgroundType === 'color' && (
@@ -616,7 +635,8 @@ export function PremiumChatSettings() {
                 <Button
                   type="button"
                   onClick={() => setShowNameCustomization(true)}
-                  className="w-full bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-600 hover:to-amber-600 text-white font-semibold"
+                  className="w-full bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-600 hover:to-amber-600 text-white font-semibold h-12 sm:h-11 min-h-[48px] sm:min-h-[44px] touch-manipulation active:scale-95"
+                  style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
                 >
                   <Wand2 className="w-4 h-4 mr-2" />
                   {dir === 'rtl' ? 'تخصيص الاسم الآن' : 'Customize Name Now'}
