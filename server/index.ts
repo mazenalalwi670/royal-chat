@@ -5,6 +5,10 @@ import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { connectDatabase, User, Conversation, Message, Contact } from './database.js';
+import { sendOTP, verifyOTP, findUsersByPhoneNumbers } from './auth.js';
+import { connectDatabase, User, Conversation, Message, Contact } from './database.js';
+import { sendOTP, verifyOTP, findUsersByPhoneNumbers } from './auth.js';
 
 // Use CommonJS approach for __dirname and __filename
 const __filename = fileURLToPath(import.meta.url);
@@ -40,9 +44,72 @@ app.use(cors({
 }));
 app.use(express.json());
 
+// Connect to database
+connectDatabase().catch(console.error);
+
 // API Routes
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Server is running' });
+});
+
+// Authentication Routes
+app.post('/api/auth/send-otp', async (req, res) => {
+  try {
+    const { phoneNumber, email } = req.body;
+    
+    if (!phoneNumber || !email) {
+      return res.status(400).json({ success: false, message: 'رقم الهاتف والبريد الإلكتروني مطلوبان' });
+    }
+
+    const result = await sendOTP(phoneNumber, email);
+    
+    if (result.success) {
+      res.json({ success: true, message: result.message });
+    } else {
+      res.status(400).json({ success: false, message: result.message });
+    }
+  } catch (error: any) {
+    console.error('Error in send-otp:', error);
+    res.status(500).json({ success: false, message: 'حدث خطأ في الخادم' });
+  }
+});
+
+app.post('/api/auth/verify-otp', async (req, res) => {
+  try {
+    const { phoneNumber, code } = req.body;
+    
+    if (!phoneNumber || !code) {
+      return res.status(400).json({ success: false, message: 'رقم الهاتف وكود التحقق مطلوبان' });
+    }
+
+    const result = await verifyOTP(phoneNumber, code);
+    
+    if (result.success) {
+      res.json({ success: true, user: result.user, message: result.message });
+    } else {
+      res.status(400).json({ success: false, message: result.message });
+    }
+  } catch (error: any) {
+    console.error('Error in verify-otp:', error);
+    res.status(500).json({ success: false, message: 'حدث خطأ في الخادم' });
+  }
+});
+
+// Find registered users by phone numbers (for contact sync)
+app.post('/api/users/find-by-phones', async (req, res) => {
+  try {
+    const { phoneNumbers } = req.body;
+    
+    if (!phoneNumbers || !Array.isArray(phoneNumbers)) {
+      return res.status(400).json({ success: false, message: 'قائمة أرقام الهواتف مطلوبة' });
+    }
+
+    const users = await findUsersByPhoneNumbers(phoneNumbers);
+    res.json({ success: true, users });
+  } catch (error: any) {
+    console.error('Error in find-by-phones:', error);
+    res.status(500).json({ success: false, message: 'حدث خطأ في الخادم' });
+  }
 });
 
 // Serve static files from the React app

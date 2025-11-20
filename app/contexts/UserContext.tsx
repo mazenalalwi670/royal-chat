@@ -18,6 +18,7 @@ interface UserContextType {
   login: (phoneNumber: string) => Promise<void>;
   logout: () => void;
   updateUser: (updates: Partial<User>) => void;
+  setUser: (user: { id: string; name: string; avatar: string; phoneNumber?: string; email?: string }) => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -191,6 +192,21 @@ export function UserProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const setUserFromAuth = (userData: { id: string; name: string; avatar: string; phoneNumber?: string; email?: string }) => {
+    const newUser: User = {
+      id: userData.id,
+      phoneNumber: userData.phoneNumber || '',
+      name: userData.name,
+      avatar: userData.avatar,
+      isLoggedIn: true
+    };
+    setUser(newUser);
+    setIsAuthenticated(true);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(newUser));
+    }
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -199,7 +215,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
         isLoading,
         login,
         logout,
-        updateUser
+        updateUser,
+        setUser: setUserFromAuth
       }}
     >
       {children}
