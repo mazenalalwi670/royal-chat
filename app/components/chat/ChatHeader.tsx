@@ -34,19 +34,45 @@ export function ChatHeader({ conversation, currentUser, onBack }: ChatHeaderProp
     : [];
   
   // Find other user - participants might be string IDs or User objects
-  const otherUserId = participants.find((p: string | User) => {
+  const otherUser = participants.find((p: string | User) => {
     const id = typeof p === 'string' ? p : p.id;
     return id !== currentUser.id;
-  });
+  }) as User | string | undefined;
   
   // For now, we'll use the conversation name or a default
   const isGroup = conversation.isGroup || false;
-  const displayName = isGroup ? conversation.name : (typeof otherUserId === 'string' ? otherUserId : otherUserId?.name || conversation.name);
-  const displayAvatar = isGroup ? conversation.avatar : (typeof otherUserId === 'string' ? undefined : otherUserId?.avatar || conversation.avatar);
+  
+  // Get display name and avatar from the other user
+  let displayName: string;
+  let displayAvatar: string | undefined;
+  
+  if (isGroup) {
+    displayName = conversation.name || (dir === 'rtl' ? 'مجموعة' : 'Group');
+    displayAvatar = conversation.avatar;
+  } else {
+    if (typeof otherUser === 'string') {
+      // If it's a string ID, try to find the user in participants
+      const foundUser = participants.find((p: string | User) => {
+        const id = typeof p === 'string' ? p : p.id;
+        return id === otherUser && id !== currentUser.id;
+      }) as User | undefined;
+      displayName = foundUser?.name || conversation.name || (dir === 'rtl' ? 'غير معروف' : 'Unknown');
+      displayAvatar = foundUser?.avatar || conversation.avatar;
+    } else if (otherUser && typeof otherUser === 'object') {
+      // It's a User object
+      displayName = otherUser.name || conversation.name || (dir === 'rtl' ? 'غير معروف' : 'Unknown');
+      displayAvatar = otherUser.avatar || conversation.avatar;
+    } else {
+      // Fallback
+      displayName = conversation.name || (dir === 'rtl' ? 'غير معروف' : 'Unknown');
+      displayAvatar = conversation.avatar;
+    }
+  }
+  
   const participantCount = participants.length;
   
   // For status, we can't determine it from string IDs, so we'll show offline by default
-  const isOnline = typeof otherUserId !== 'string' && otherUserId?.status === 'online';
+  const isOnline = typeof otherUser !== 'string' && otherUser && typeof otherUser === 'object' && otherUser.status === 'online';
 
   // Get caller info for calls
   const caller = typeof otherUserId === 'string' 

@@ -362,8 +362,8 @@ function App() {
 
   return (
     <div className="flex h-[100dvh] bg-background overflow-hidden w-full max-w-full touch-pan-y">
-      {/* Hide sidebar on mobile when viewing chats */}
-      {!(isMobile && activeTab === 'chats') && (
+      {/* Hide sidebar completely on mobile - show only on desktop */}
+      {!isMobile && (
         <Sidebar
           currentUser={{
             ...currentUser,
@@ -376,8 +376,8 @@ function App() {
 
       {activeTab === 'chats' && (
         <>
-          {/* Conversations List - Show on mobile when no conversation selected, always on desktop */}
-          <div className={`w-full sm:w-80 flex-shrink-0 ${isMobile && selectedConversationId ? 'hidden' : 'block'}`}>
+          {/* Conversations List - Full width on mobile when no conversation selected, fixed width on desktop */}
+          <div className={`${isMobile ? 'w-full' : 'w-80'} flex-shrink-0 ${isMobile && selectedConversationId ? 'hidden' : 'block'}`}>
             <ConversationsList
               conversations={conversations.map(conv => ({
                 id: conv.id,
@@ -400,8 +400,8 @@ function App() {
             />
           </div>
 
-          {/* Chat Interface - Show on mobile when conversation selected, always on desktop if conversation exists */}
-          <div className={`flex-1 min-w-0 overflow-hidden ${isMobile && !selectedConversationId ? 'hidden' : 'block'}`}>
+          {/* Chat Interface - Full width on mobile when conversation selected, flex-1 on desktop */}
+          <div className={`${isMobile ? 'w-full' : 'flex-1'} min-w-0 overflow-hidden ${isMobile && !selectedConversationId ? 'hidden' : 'block'}`}>
             {selectedConversation ? (
               <ChatInterface
                 conversation={{

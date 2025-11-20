@@ -38,12 +38,12 @@ export function ConversationsList({ conversations, selectedId, onSelect }: Conve
   };
 
   return (
-    <Card className="flex flex-col h-full border-r rounded-none sm:border-r border-0" dir={dir}>
-      <div className="p-4 border-b space-y-4">
-        <div className="flex items-center justify-between">
+    <Card className="flex flex-col h-full border-r rounded-none sm:border-r border-0 bg-background" dir={dir}>
+      <div className="p-4 border-b space-y-4 bg-background">
+        <div className="flex items-center justify-center sm:justify-start">
           <div className="flex items-center gap-2">
-            <Crown className="w-6 h-6" style={{ color: `hsl(var(--primary))` }} />
-            <h2 className="text-2xl font-bold" style={{
+            <Crown className="w-6 h-6 sm:w-6 sm:h-6" style={{ color: `hsl(var(--primary))` }} />
+            <h2 className="text-xl sm:text-2xl font-bold" style={{
               color: `hsl(var(--primary))`
             }}>
               Royal Chat
@@ -79,9 +79,9 @@ export function ConversationsList({ conversations, selectedId, onSelect }: Conve
                   selectedId === conv.id && 'bg-accent shadow-sm'
                 )}
               >
-                <div className="flex items-start gap-3">
-                  <div className="relative">
-                    <Avatar className="w-12 h-12 border-2 border-background">
+                <div className={`flex items-start gap-3 ${dir === 'rtl' ? 'flex-row-reverse' : ''}`}>
+                  <div className="relative flex-shrink-0">
+                    <Avatar className="w-12 h-12 sm:w-12 sm:h-12 border-2 border-background">
                       <AvatarImage src={getConversationAvatar(conv)} />
                       <AvatarFallback>{getConversationName(conv)[0]}</AvatarFallback>
                     </Avatar>
@@ -90,27 +90,27 @@ export function ConversationsList({ conversations, selectedId, onSelect }: Conve
                     )}
                   </div>
 
-                  <div className="flex-1 min-w-0 text-right">
-                    <div className="flex items-center justify-between mb-1">
-                      <div className="flex items-center gap-2">
+                  <div className={`flex-1 min-w-0 ${dir === 'rtl' ? 'text-right' : 'text-left'}`}>
+                    <div className={`flex items-center justify-between mb-1 ${dir === 'rtl' ? 'flex-row-reverse' : ''}`}>
+                      <div className={`flex items-center gap-2 ${dir === 'rtl' ? 'flex-row-reverse' : ''}`}>
                         <span className="font-semibold text-sm truncate">
                           {getConversationName(conv)}
                         </span>
-                        {conv.pinned && <Pin className="w-3 h-3" style={{ color: `hsl(var(--primary))` }} />}
+                        {conv.pinned && <Pin className="w-3 h-3 flex-shrink-0" style={{ color: `hsl(var(--primary))` }} />}
                       </div>
                       {conv.lastMessage && (
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-xs text-muted-foreground whitespace-nowrap flex-shrink-0">
                           {formatDistanceToNow(conv.lastMessage.timestamp, { addSuffix: false })}
                         </span>
                       )}
                     </div>
 
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm text-muted-foreground truncate">
+                    <div className={`flex items-center justify-between gap-2 ${dir === 'rtl' ? 'flex-row-reverse' : ''}`}>
+                      <p className="text-sm text-muted-foreground truncate flex-1 min-w-0">
                         {conv.lastMessage?.content || t('chat.noMessages')}
                       </p>
                       {conv.unreadCount > 0 && (
-                        <Badge className={dir === 'rtl' ? 'mr-2' : 'ml-2'} style={{ backgroundColor: `hsl(var(--primary))`, color: 'white' }}>
+                        <Badge className="flex-shrink-0" style={{ backgroundColor: `hsl(var(--primary))`, color: 'white' }}>
                           {conv.unreadCount}
                         </Badge>
                       )}
