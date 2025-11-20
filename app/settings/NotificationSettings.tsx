@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/ui/card';
 import { Label } from '@/ui/label';
 import { Switch } from '@/ui/switch';
@@ -8,18 +8,38 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/ui/separator';
 import { Bell, Volume2, Smartphone } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { NotificationService } from '../services/NotificationService';
 
 export function NotificationSettings() {
   const { t, dir } = useLanguage();
-  const [pushNotifications, setPushNotifications] = useState(true);
+  const [pushNotifications, setPushNotifications] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('royal_chat_notifications_enabled');
+      return saved !== null ? saved === 'true' : true;
+    }
+    return true;
+  });
   const [messageNotifications, setMessageNotifications] = useState(true);
   const [groupNotifications, setGroupNotifications] = useState(true);
   const [reactionNotifications, setReactionNotifications] = useState(true);
   const [mentionNotifications, setMentionNotifications] = useState(true);
-  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [soundEnabled, setSoundEnabled] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('royal_chat_notifications_sound');
+      return saved !== null ? saved === 'true' : true;
+    }
+    return true;
+  });
   const [vibrationEnabled, setVibrationEnabled] = useState(true);
   const [notificationSound, setNotificationSound] = useState('default');
   const [notificationPreview, setNotificationPreview] = useState('always');
+
+  // Request permission when component mounts and notifications are enabled
+  useEffect(() => {
+    if (pushNotifications && NotificationService.isSupported()) {
+      NotificationService.requestPermission();
+    }
+  }, [pushNotifications]);
 
   return (
     <div className="space-y-6" dir={dir}>
@@ -40,7 +60,13 @@ export function NotificationSettings() {
             <Switch
               id="push"
               checked={pushNotifications}
-              onCheckedChange={setPushNotifications}
+              onCheckedChange={(checked) => {
+                setPushNotifications(checked);
+                NotificationService.setEnabled(checked);
+                if (checked) {
+                  NotificationService.requestPermission();
+                }
+              }}
             />
           </div>
 
@@ -119,7 +145,10 @@ export function NotificationSettings() {
             <Switch
               id="sound"
               checked={soundEnabled}
-              onCheckedChange={setSoundEnabled}
+              onCheckedChange={(checked) => {
+                setSoundEnabled(checked);
+                NotificationService.setSoundEnabled(checked);
+              }}
             />
           </div>
 

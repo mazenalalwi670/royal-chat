@@ -11,6 +11,7 @@ import { useWebSocket } from '../../contexts/WebSocketContext';
 import { ChatHeader } from './ChatHeader';
 import { MessageInput } from '../../MessageInput';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { NotificationService } from '../../services/NotificationService';
 
 interface ChatInterfaceProps {
   conversation: AppConversation | Conversation;
@@ -49,6 +50,41 @@ export function ChatInterface({
             ? message.timestamp 
             : new Date()
       };
+      
+      // Check if message is from another user (not current user)
+      const isFromOtherUser = processedMessage.senderId !== currentUser.id;
+      
+      // Show notification if message is from another user
+      if (isFromOtherUser) {
+        const senderName = (processedMessage as any).senderName || 
+                          (conversation.participants?.find((p: any) => p.id === processedMessage.senderId)?.name) || 
+                          'Unknown';
+        const senderAvatar = (processedMessage as any).senderAvatar || 
+                            (conversation.participants?.find((p: any) => p.id === processedMessage.senderId)?.avatar);
+        
+        // Get message content (handle text or attachments)
+        let messageContent = processedMessage.content || '';
+        if ((processedMessage as any).attachments && (processedMessage as any).attachments.length > 0) {
+          const attachment = (processedMessage as any).attachments[0];
+          if (attachment.type === 'image') {
+            messageContent = dir === 'rtl' ? '📷 صورة' : '📷 Image';
+          } else if (attachment.type === 'voice' || attachment.type === 'audio') {
+            messageContent = dir === 'rtl' ? '🎤 رسالة صوتية' : '🎤 Voice message';
+          } else if (attachment.type === 'file') {
+            messageContent = dir === 'rtl' ? '📎 ملف' : '📎 File';
+          } else if (attachment.type === 'location') {
+            messageContent = dir === 'rtl' ? '📍 موقع' : '📍 Location';
+          }
+        }
+        
+        NotificationService.showMessageNotification(
+          senderName,
+          messageContent,
+          senderAvatar,
+          conversation.id,
+          dir
+        );
+      }
       
       // Update message status from 'sending' to 'sent' if it's our message
       // Or add new message if it's from another user

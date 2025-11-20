@@ -23,6 +23,9 @@ import {
 } from './lib/typeAdapters';
 import type { Message as OriginalMessage } from '../data/lib/types/chat';
 import { useUser } from './contexts/UserContext';
+import { useWebSocket } from './contexts/WebSocketContext';
+import { useLanguage } from './contexts/LanguageContext';
+import { NotificationService } from './services/NotificationService';
 
 // Initial data will be converted as needed
 
@@ -114,6 +117,10 @@ function App() {
     }
   }, [loggedInUser?.name, loggedInUser?.avatar]);
 
+  // Get WebSocket and language context
+  const { socket } = useWebSocket();
+  const { dir } = useLanguage();
+
   // Detect mobile screen size
   useEffect(() => {
     const checkMobile = () => {
@@ -123,6 +130,63 @@ function App() {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  // Listen for messages from all conversations for notifications
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleGlobalMessage = (message: any) => {
+      // Only show notification if message is from another user
+      if (message.senderId && message.senderId !== currentUser.id) {
+        // Check if we're not currently viewing this conversation
+        const isViewingConversation = selectedConversationId === message.conversationId;
+        
+        // Find the conversation
+        const conversation = conversations.find(c => c.id === message.conversationId);
+        if (!conversation) return;
+
+        // Find sender info
+        const sender = conversation.participants?.find((p: any) => p.id === message.senderId);
+        const senderName = message.senderName || sender?.name || 'Unknown';
+        const senderAvatar = message.senderAvatar || sender?.avatar;
+
+        // Get message content
+        let messageContent = message.content || '';
+        if (message.attachments && message.attachments.length > 0) {
+          const attachment = message.attachments[0];
+          if (attachment.type === 'image') {
+            messageContent = dir === 'rtl' ? '📷 صورة' : '📷 Image';
+          } else if (attachment.type === 'voice' || attachment.type === 'audio') {
+            messageContent = dir === 'rtl' ? '🎤 رسالة صوتية' : '🎤 Voice message';
+          } else if (attachment.type === 'file') {
+            messageContent = dir === 'rtl' ? '📎 ملف' : '📎 File';
+          } else if (attachment.type === 'location') {
+            messageContent = dir === 'rtl' ? '📍 موقع' : '📍 Location';
+          }
+        }
+
+        // Show notification if not viewing this conversation or page is not visible
+        if (!isViewingConversation || document.visibilityState !== 'visible') {
+          NotificationService.showMessageNotification(
+            senderName,
+            messageContent,
+            senderAvatar,
+            message.conversationId,
+            dir
+          );
+        }
+      }
+    };
+
+    // Listen for new messages from WebSocket
+    socket.on('receive_message', handleGlobalMessage);
+    socket.on('new_message', handleGlobalMessage);
+
+    return () => {
+      socket.off('receive_message', handleGlobalMessage);
+      socket.off('new_message', handleGlobalMessage);
+    };
+  }, [socket, currentUser.id, selectedConversationId, conversations, dir]);
 
   const selectedConversation = selectedConversationId ? conversations.find(c => c.id === selectedConversationId) : null;
 
