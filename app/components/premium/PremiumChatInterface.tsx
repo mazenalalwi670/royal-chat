@@ -1256,17 +1256,17 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
         {/* Show Royal background by default - only hide if user has explicitly set a custom color/image */}
         {chatBackground.type !== 'image' && (!chatBackground.value || chatBackground.value === '') && (
           <>
-            {/* Royal Crown Icon - Centered and Large - Mobile responsive */}
+            {/* Royal Crown Icon - Centered and Large - Mobile responsive for 1080x2340 */}
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none">
               <div className="relative">
-                {/* Crown SVG Icon - Luxurious - Mobile responsive size */}
+                {/* Crown SVG Icon - Luxurious - Smaller on mobile for 1080x2340 */}
                 <svg 
-                  width="200" 
-                  height="200" 
-                  className="sm:w-[300px] sm:h-[300px] md:w-[400px] md:h-[400px] opacity-10 royal-crown"
+                  width="150" 
+                  height="150" 
+                  className="sm:w-[200px] sm:h-[200px] md:w-[300px] md:h-[300px] opacity-10 royal-crown"
                   viewBox="0 0 200 200"
                   style={{
-                    filter: 'drop-shadow(0 0 40px rgba(255, 215, 0, 0.3)) drop-shadow(0 0 80px rgba(255, 215, 0, 0.2))',
+                    filter: 'drop-shadow(0 0 30px rgba(255, 215, 0, 0.3)) drop-shadow(0 0 60px rgba(255, 215, 0, 0.2))',
                     animation: 'royalPulse 4s ease-in-out infinite'
                   }}
                 >
@@ -1291,10 +1291,10 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
                   />
                 </svg>
                 
-                {/* Royal Text Below Crown - Mobile responsive */}
-                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-4 sm:mt-6 md:mt-8">
+                {/* Royal Text Below Crown - Mobile responsive for 1080x2340 */}
+                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 sm:mt-4 md:mt-6">
                   <h1 
-                    className="text-3xl sm:text-5xl md:text-6xl lg:text-8xl font-bold royal-text"
+                    className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold royal-text"
                     style={{
                       fontFamily: 'serif',
                       letterSpacing: '0.1em',
@@ -1308,8 +1308,8 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
               </div>
             </div>
 
-            {/* Golden Sparkles - Royal Ambiance - Reduced on mobile for performance */}
-            {Array.from({ length: typeof window !== 'undefined' && window.innerWidth < 640 ? 20 : 50 }).map((_, i) => {
+            {/* Golden Sparkles - Royal Ambiance - Reduced on mobile for performance and 1080x2340 */}
+            {Array.from({ length: typeof window !== 'undefined' && window.innerWidth < 640 ? 15 : 40 }).map((_, i) => {
               const delay = Math.random() * 4;
               const duration = 3 + Math.random() * 3;
               const size = 2 + Math.random() * 4;
@@ -1425,10 +1425,10 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
         )}
       </div>
 
-      {/* Header - Mobile responsive with better sizing */}
+      {/* Header - Mobile responsive with better sizing for 1080x2340 */}
       <Card className="border-b rounded-none premium-header animate-slide-in-down relative z-10 bg-background w-full touch-manipulation">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-2 sm:p-3 md:p-4 gap-2 sm:gap-3">
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 w-full sm:w-auto">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-1.5 sm:p-2 md:p-3 gap-1.5 sm:gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 min-w-0 flex-1 w-full sm:w-auto">
             <div className="relative flex-shrink-0">
               {/* Fancy Frame for Premium Chat Avatar */}
               <div
@@ -1443,7 +1443,7 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
                 }}
               />
               <Avatar className={cn(
-                "w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 border-2 sm:border-3 md:border-4 border-background relative z-10 shadow-xl animate-fade-in-scale flex-shrink-0",
+                "w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 border-2 sm:border-2 md:border-3 border-background relative z-10 shadow-xl animate-fade-in-scale flex-shrink-0",
                 isCurrentUserAdmin && "admin-avatar-jewel"
               )}>
                 <AvatarFallback 
@@ -1457,77 +1457,77 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
                   }}
                 >
                   {isCurrentUserAdmin ? (
-                    <Crown className="w-6 h-6 sm:w-7 sm:h-7 text-white animate-bounce-slow admin-crown-jewel" />
+                    <Crown className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white animate-bounce-slow admin-crown-jewel" />
                   ) : (
-                    <Crown className="w-6 h-6 sm:w-7 sm:h-7 text-white animate-bounce-slow" />
+                    <Crown className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white animate-bounce-slow" />
                   )}
                 </AvatarFallback>
               </Avatar>
               {isCurrentUserAdmin ? (
-                <Badge className="absolute -bottom-1 -right-1 bg-yellow-500 border-2 border-background z-20 shadow-lg animate-pulse admin-badge-jewel">
-                  <Crown className="w-3 h-3 sm:w-4 sm:h-4 text-white animate-bounce-slow" />
+                <Badge className="absolute -bottom-0.5 -right-0.5 sm:-bottom-1 sm:-right-1 bg-yellow-500 border-1.5 sm:border-2 border-background z-20 shadow-lg animate-pulse admin-badge-jewel">
+                  <Crown className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 text-white animate-bounce-slow" />
                 </Badge>
               ) : (
-                <Badge className="absolute -bottom-1 -right-1 bg-green-500 border-2 border-background z-20 shadow-lg animate-pulse">
-                  <Shield className="w-3 h-3 sm:w-4 sm:h-4" />
+                <Badge className="absolute -bottom-0.5 -right-0.5 sm:-bottom-1 sm:-right-1 bg-green-500 border-1.5 sm:border-2 border-background z-20 shadow-lg animate-pulse">
+                  <Shield className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4" />
                 </Badge>
               )}
               {isCurrentUserAdmin && (
-                <div className="absolute -inset-2 bg-yellow-400/20 rounded-full blur-xl animate-pulse admin-glow-jewel" />
+                <div className="absolute -inset-1.5 sm:-inset-2 bg-yellow-400/20 rounded-full blur-xl animate-pulse admin-glow-jewel" />
               )}
             </div>
             <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-1 sm:gap-1.5 sm:gap-2 flex-wrap mb-0.5 sm:mb-1">
-                <h2 className="font-bold text-sm sm:text-base md:text-lg lg:text-xl flex items-center gap-1 sm:gap-1.5 sm:gap-2 animate-gradient min-w-0 truncate" style={{ color: `hsl(var(--primary))` }}>
+              <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2 flex-wrap mb-0.5">
+                <h2 className="font-bold text-xs sm:text-sm md:text-base lg:text-lg flex items-center gap-1 sm:gap-1.5 md:gap-2 animate-gradient min-w-0 truncate" style={{ color: `hsl(var(--primary))` }}>
                   {isCurrentUserAdmin ? (
                     <div className="relative flex-shrink-0">
-                      <Crown className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 animate-bounce-slow admin-crown-jewel" style={{ color: `#ffd700` }} />
+                      <Crown className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 animate-bounce-slow admin-crown-jewel" style={{ color: `#ffd700` }} />
                       <div className="absolute -inset-0.5 sm:-inset-1 bg-yellow-400/30 rounded-full blur-md animate-pulse" />
                     </div>
                   ) : (
-                    <Crown className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 animate-bounce-slow flex-shrink-0" />
+                    <Crown className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 animate-bounce-slow flex-shrink-0" />
                   )}
-                  <span className="truncate text-xs sm:text-sm md:text-base lg:text-lg">{dir === 'rtl' ? `الدردشة المميزة` : `Premium Chat`}</span>
+                  <span className="truncate text-xs sm:text-sm md:text-base">{dir === 'rtl' ? `الدردشة المميزة` : `Premium Chat`}</span>
                 </h2>
                 {isCurrentUserAdmin && (
-                  <Badge variant="secondary" className="bg-yellow-500/20 text-yellow-600 border-yellow-500/30 animate-pulse admin-badge-jewel text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 min-h-[20px]">
-                    <Crown className="w-2.5 h-2.5 sm:w-3 sm:h-3 sm:mr-1 animate-bounce-slow" />
-                    <span className="hidden sm:inline">{dir === 'rtl' ? 'مالك' : 'Owner'}</span>
+                  <Badge variant="secondary" className="bg-yellow-500/20 text-yellow-600 border-yellow-500/30 animate-pulse admin-badge-jewel text-[9px] sm:text-[10px] md:text-xs px-1 sm:px-1.5 md:px-2 py-0.5 min-h-[18px] sm:min-h-[20px]">
+                    <Crown className="w-2 h-2 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3 sm:mr-0.5 md:mr-1 animate-bounce-slow" />
+                    <span className="hidden sm:inline text-[9px] sm:text-[10px] md:text-xs">{dir === 'rtl' ? 'مالك' : 'Owner'}</span>
                   </Badge>
                 )}
-                <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 animate-fade-in-scale text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 min-h-[20px]">
+                <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 animate-fade-in-scale text-[9px] sm:text-[10px] md:text-xs px-1 sm:px-1.5 md:px-2 py-0.5 min-h-[18px] sm:min-h-[20px]">
                   {dir === 'rtl' ? 'حصري' : 'Exclusive'}
                 </Badge>
               </div>
-              <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 text-[10px] sm:text-xs md:text-sm text-muted-foreground flex-wrap">
+              <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2 text-[9px] sm:text-[10px] md:text-xs text-muted-foreground flex-wrap">
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
                   onClick={() => setShowMembersList(!showMembersList)}
-                  className="h-9 sm:h-8 md:h-9 px-2 sm:px-2 md:px-3 hover:bg-primary/10 text-xs sm:text-xs md:text-sm min-h-[44px] sm:min-h-[32px] touch-manipulation active:scale-95"
+                  className="h-8 sm:h-7 md:h-8 px-1.5 sm:px-2 md:px-3 hover:bg-primary/10 text-[10px] sm:text-xs md:text-sm min-h-[36px] sm:min-h-[28px] md:min-h-[32px] touch-manipulation active:scale-95"
                   style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
                 >
-                  <UsersRound className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 sm:mr-1 md:mr-1.5" />
-                  <span className="hidden xs:inline">{members.length} {dir === 'rtl' ? 'مشترك' : 'members'}</span>
-                  <span className="xs:hidden">{members.length}</span>
+                  <UsersRound className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 sm:mr-0.5 md:mr-1" />
+                  <span className="hidden xs:inline text-[10px] sm:text-xs">{members.length} {dir === 'rtl' ? 'مشترك' : 'members'}</span>
+                  <span className="xs:hidden text-[10px] sm:text-xs">{members.length}</span>
                 </Button>
                 {isVoiceChatActive && (
-                  <Badge variant="secondary" className="bg-green-500/10 text-green-600 border-green-500/20 animate-slide-in-up text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 min-h-[20px]">
-                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full animate-pulse sm:mr-1" />
-                    <span>{dir === 'rtl' ? 'صوتي نشط' : 'Voice'}</span>
+                  <Badge variant="secondary" className="bg-green-500/10 text-green-600 border-green-500/20 animate-slide-in-up text-[9px] sm:text-[10px] md:text-xs px-1 sm:px-1.5 md:px-2 py-0.5 min-h-[18px] sm:min-h-[20px]">
+                    <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 md:w-2 md:h-2 bg-green-500 rounded-full animate-pulse sm:mr-0.5 md:mr-1" />
+                    <span className="text-[9px] sm:text-[10px] md:text-xs">{dir === 'rtl' ? 'صوتي نشط' : 'Voice'}</span>
                   </Badge>
                 )}
                 {isInvisible && (
-                  <Badge variant="secondary" className="bg-gray-500/10 text-gray-600 border-gray-500/20 animate-pulse text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 min-h-[20px]">
-                    <EyeOff className="w-2.5 h-2.5 sm:w-3 sm:h-3 sm:mr-1" />
-                    <span>{dir === 'rtl' ? 'مخفي' : 'Hidden'}</span>
+                  <Badge variant="secondary" className="bg-gray-500/10 text-gray-600 border-gray-500/20 animate-pulse text-[9px] sm:text-[10px] md:text-xs px-1 sm:px-1.5 md:px-2 py-0.5 min-h-[18px] sm:min-h-[20px]">
+                    <EyeOff className="w-2 h-2 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3 sm:mr-0.5 md:mr-1" />
+                    <span className="text-[9px] sm:text-[10px] md:text-xs">{dir === 'rtl' ? 'مخفي' : 'Hidden'}</span>
                   </Badge>
                 )}
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap w-full sm:w-auto justify-end">
+          <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2 flex-wrap w-full sm:w-auto justify-end">
             {isCurrentUserAdmin && (
               <Button
                 type="button"
@@ -1535,7 +1535,7 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
                 variant={isInvisible ? 'secondary' : 'outline'}
                 onClick={toggleInvisibility}
                 className={cn(
-                  'rounded-full transition-all duration-300 hover:scale-110 active:scale-95 h-10 sm:h-9 md:h-10 px-3 sm:px-3 md:px-4 min-h-[44px] sm:min-h-[36px] touch-manipulation',
+                  'rounded-full transition-all duration-300 hover:scale-110 active:scale-95 h-8 sm:h-7 md:h-8 px-2 sm:px-2.5 md:px-3 min-h-[36px] sm:min-h-[28px] md:min-h-[32px] touch-manipulation',
                   isInvisible && 'bg-gray-500/20 border-gray-500/30 shadow-lg'
                 )}
                 style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
@@ -1543,13 +1543,13 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
               >
                 {isInvisible ? (
                   <>
-                    <EyeOff className="w-3.5 h-3.5 sm:w-4 sm:h-4 sm:mr-1.5 md:mr-2" />
-                    <span className="hidden sm:inline text-xs sm:text-sm">{dir === 'rtl' ? 'إظهار' : 'Show'}</span>
+                    <EyeOff className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 sm:mr-1 md:mr-1.5" />
+                    <span className="hidden sm:inline text-[10px] sm:text-xs md:text-sm">{dir === 'rtl' ? 'إظهار' : 'Show'}</span>
                   </>
                 ) : (
                   <>
-                    <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4 sm:mr-1.5 md:mr-2" />
-                    <span className="hidden sm:inline text-xs sm:text-sm">{dir === 'rtl' ? 'إخفاء' : 'Hide'}</span>
+                    <Eye className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 sm:mr-1 md:mr-1.5" />
+                    <span className="hidden sm:inline text-[10px] sm:text-xs md:text-sm">{dir === 'rtl' ? 'إخفاء' : 'Hide'}</span>
                   </>
                 )}
               </Button>
@@ -1565,16 +1565,16 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
               variant="outline"
               onClick={() => setShowSubscriptionOffers(true)}
               className={cn(
-                "rounded-full transition-all duration-300 hover:scale-110 active:scale-95 h-10 sm:h-10 w-10 sm:w-10 min-h-[44px] min-w-[44px] touch-manipulation",
+                "rounded-full transition-all duration-300 hover:scale-110 active:scale-95 h-8 sm:h-8 md:h-9 w-8 sm:w-8 md:w-9 min-h-[36px] sm:min-h-[32px] md:min-h-[36px] min-w-[36px] sm:min-w-[32px] md:min-w-[36px] touch-manipulation",
                 "border-yellow-500/30 hover:border-yellow-500 bg-gradient-to-r from-yellow-500/10 to-amber-500/10"
               )}
               title={dir === 'rtl' ? 'عروض الاشتراك' : 'Subscription Offers'}
               style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
             >
-              <Crown className="w-5 h-5 sm:w-5 sm:h-5 text-yellow-500" />
+              <Crown className="w-4 h-4 sm:w-4 sm:h-4 md:w-5 md:h-5 text-yellow-500" />
             </Button>
             
-            <Badge variant="outline" className="border-primary text-primary animate-fade-in-scale text-[10px] sm:text-xs px-2 sm:px-3 py-1 min-h-[28px]">
+            <Badge variant="outline" className="border-primary text-primary animate-fade-in-scale text-[9px] sm:text-[10px] md:text-xs px-1.5 sm:px-2 md:px-3 py-0.5 sm:py-1 min-h-[24px] sm:min-h-[26px] md:min-h-[28px]">
               {dir === 'rtl' ? 'مدى الحياة' : 'Lifetime'}
             </Badge>
             <Button
@@ -1583,7 +1583,7 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
               variant={isVoiceChatActive ? 'default' : 'outline'}
               onClick={handleToggleVoiceChat}
               className={cn(
-                'rounded-full transition-all duration-300 hover:scale-110 active:scale-95 h-10 sm:h-9 md:h-10 px-3 sm:px-3 md:px-4 min-h-[44px] sm:min-h-[36px] touch-manipulation',
+                'rounded-full transition-all duration-300 hover:scale-110 active:scale-95 h-8 sm:h-7 md:h-8 px-2 sm:px-2.5 md:px-3 min-h-[36px] sm:min-h-[28px] md:min-h-[32px] touch-manipulation',
                 isVoiceChatActive && 'bg-primary hover:bg-primary/90 shadow-lg animate-pulse'
               )}
               style={
@@ -1599,9 +1599,9 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
                     }
               }
             >
-              <Mic className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 sm:mr-1.5 md:mr-2" />
-              <span className="hidden sm:inline text-xs sm:text-sm">{isVoiceChatActive ? (dir === 'rtl' ? 'خروج' : 'Leave') : (dir === 'rtl' ? 'دخول صوتي' : 'Join Voice')}</span>
-              <span className="sm:hidden text-xs">{isVoiceChatActive ? (dir === 'rtl' ? 'خروج' : 'Leave') : (dir === 'rtl' ? 'صوتي' : 'Voice')}</span>
+              <Mic className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 sm:mr-1 md:mr-1.5" />
+              <span className="hidden sm:inline text-[10px] sm:text-xs md:text-sm">{isVoiceChatActive ? (dir === 'rtl' ? 'خروج' : 'Leave') : (dir === 'rtl' ? 'دخول صوتي' : 'Join Voice')}</span>
+              <span className="sm:hidden text-[10px] sm:text-xs">{isVoiceChatActive ? (dir === 'rtl' ? 'خروج' : 'Leave') : (dir === 'rtl' ? 'صوتي' : 'Voice')}</span>
             </Button>
           </div>
         </div>
@@ -1746,17 +1746,17 @@ export function PremiumChatInterface({ currentUser, subscription }: PremiumChatI
         </div>
       )}
 
-      {/* Messages - Mobile responsive with better sizing */}
+      {/* Messages - Mobile responsive with better sizing for 1080x2340 */}
       <ScrollArea 
-        className="flex-1 p-2 sm:p-3 md:p-4 relative z-10 w-full min-w-0 touch-pan-y"
+        className="flex-1 p-1.5 sm:p-2 md:p-3 relative z-10 w-full min-w-0 touch-pan-y"
         style={{
-          maxHeight: 'calc(100dvh - 240px)',
-          height: 'calc(100dvh - 240px)',
+          maxHeight: 'calc(100dvh - 200px)',
+          height: 'calc(100dvh - 200px)',
           WebkitOverflowScrolling: 'touch',
           touchAction: 'pan-y pinch-zoom'
         }}
       >
-        <div className="space-y-2 sm:space-y-3 md:space-y-4 pb-4 sm:pb-6 min-w-0">
+        <div className="space-y-1.5 sm:space-y-2 md:space-y-3 pb-3 sm:pb-4 md:pb-6 min-w-0">
           {messages.map((message, index) => {
             const sender = members.find(m => m.id === message.senderId) || { ...displayUser, isPremiumSubscriber: true };
             const isCurrentUser = message.senderId === displayUser.id;

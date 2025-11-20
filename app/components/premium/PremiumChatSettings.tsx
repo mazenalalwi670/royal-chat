@@ -205,12 +205,13 @@ export function PremiumChatSettings() {
           size="sm"
           variant="outline"
           className={cn(
-            "rounded-full transition-all duration-300 hover:scale-110",
+            "rounded-full transition-all duration-300 hover:scale-110 active:scale-95 h-8 sm:h-8 md:h-9 w-8 sm:w-8 md:w-9 min-h-[36px] sm:min-h-[32px] md:min-h-[36px] min-w-[36px] sm:min-w-[32px] md:min-w-[36px] touch-manipulation",
             "border-primary/20 hover:border-primary"
           )}
           title={dir === 'rtl' ? 'الإعدادات' : 'Settings'}
+          style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
         >
-          <Settings className="w-4 h-4" />
+          <Settings className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5" />
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-full sm:max-w-4xl max-h-[90vh] overflow-y-auto w-[95vw] sm:w-full" dir={dir}>

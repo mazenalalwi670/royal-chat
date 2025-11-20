@@ -241,14 +241,14 @@ export function MessageInput({
   }, [showAttachmentMenu]);
 
   return (
-    <div className="border-t bg-background p-2 sm:p-4 w-full min-w-0 overflow-hidden" dir={dir} style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}>
+    <div className="border-t bg-background p-1.5 sm:p-2 md:p-3 w-full min-w-0 overflow-hidden" dir={dir} style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}>
       {(replyingTo || editingMessage) && (
-        <div className={`mb-2 sm:mb-3 p-2 sm:p-3 bg-muted rounded-lg flex items-start ${dir === 'rtl' ? 'flex-row-reverse' : ''} justify-between gap-2`}>
-          <div className="flex-1">
-            <p className="text-xs font-medium" style={{ color: `hsl(var(--chat-reply-border))` }}>
+        <div className={`mb-1.5 sm:mb-2 md:mb-3 p-1.5 sm:p-2 md:p-3 bg-muted rounded-lg flex items-start ${dir === 'rtl' ? 'flex-row-reverse' : ''} justify-between gap-1.5 sm:gap-2`}>
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] sm:text-xs font-medium truncate" style={{ color: `hsl(var(--chat-reply-border))` }}>
               {editingMessage ? t('chat.editMessage') : `${t('chat.replyTo')} ${replyingTo?.senderId === 'user-1' ? (dir === 'rtl' ? 'نفسك' : 'yourself') : (dir === 'rtl' ? 'الرسالة' : 'message')}`}
             </p>
-            <p className="text-sm text-muted-foreground truncate">
+            <p className="text-[10px] sm:text-xs md:text-sm text-muted-foreground truncate">
               {(editingMessage || replyingTo)?.content}
             </p>
           </div>
@@ -256,36 +256,38 @@ export function MessageInput({
             type="button"
             size="sm"
             variant="ghost"
-            className="h-6 w-6 p-0"
+            className="h-7 w-7 sm:h-6 sm:w-6 p-0 flex-shrink-0 touch-manipulation min-h-[28px] min-w-[28px]"
             onClick={editingMessage ? onCancelEdit : onCancelReply}
+            style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
           >
-            <X className="w-4 h-4" />
+            <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </Button>
         </div>
       )}
 
-      <div className={`flex items-end gap-1 sm:gap-2 ${dir === 'rtl' ? 'flex-row-reverse' : ''} w-full min-w-0`}>
-        <div className="flex-1 flex items-center gap-1 sm:gap-2 bg-muted rounded-full px-2 sm:px-4 py-1.5 sm:py-2 min-w-0 overflow-hidden">
+      <div className={`flex items-end gap-1 sm:gap-1.5 md:gap-2 ${dir === 'rtl' ? 'flex-row-reverse' : ''} w-full min-w-0`}>
+        <div className="flex-1 flex items-center gap-1 sm:gap-1.5 md:gap-2 bg-muted rounded-full px-1.5 sm:px-2 md:px-4 py-1 sm:py-1.5 md:py-2 min-w-0 overflow-hidden">
           <Popover>
             <PopoverTrigger asChild>
               <Button 
                 type="button" 
                 size="sm" 
                 variant="ghost" 
-                className="h-10 w-10 sm:h-8 sm:w-8 p-0 rounded-full hover:bg-accent touch-manipulation"
+                className="h-9 w-9 sm:h-8 sm:w-8 md:h-9 md:w-9 p-0 rounded-full hover:bg-accent touch-manipulation flex-shrink-0 min-h-[36px] min-w-[36px] sm:min-h-[32px] sm:min-w-[32px]"
                 style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
               >
-                <Smile className="w-5 h-5 sm:w-4 sm:h-4 text-muted-foreground" />
+                <Smile className="w-4 h-4 sm:w-4 sm:h-4 md:w-5 md:h-5 text-muted-foreground" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-3">
-              <div className="grid grid-cols-6 gap-2">
+            <PopoverContent className="w-auto p-2 sm:p-3">
+              <div className="grid grid-cols-6 gap-1.5 sm:gap-2">
                 {EMOJI_LIST.map((emoji) => (
                   <button
                     type="button"
                     key={emoji}
                     onClick={() => setMessage(prev => prev + emoji)}
-                    className="text-2xl hover:scale-125 transition-transform"
+                    className="text-xl sm:text-2xl hover:scale-125 transition-transform touch-manipulation min-h-[36px] min-w-[36px]"
+                    style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
                   >
                     {emoji}
                   </button>
@@ -300,7 +302,7 @@ export function MessageInput({
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={handleKeyPress}
-            className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 px-0 text-sm sm:text-base min-w-0 flex-1 min-h-[44px] touch-manipulation"
+            className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 px-0 text-xs sm:text-sm md:text-base min-w-0 flex-1 min-h-[36px] sm:min-h-[32px] md:min-h-[36px] touch-manipulation"
             dir={dir}
             style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
           />
@@ -309,12 +311,12 @@ export function MessageInput({
             type="button" 
             size="sm" 
             variant="ghost" 
-            className="h-10 w-10 sm:h-8 sm:w-8 p-0 rounded-full hover:bg-accent transition-all duration-200 hover:scale-110 touch-manipulation"
+            className="h-9 w-9 sm:h-8 sm:w-8 md:h-9 md:w-9 p-0 rounded-full hover:bg-accent transition-all duration-200 hover:scale-110 touch-manipulation flex-shrink-0 min-h-[36px] min-w-[36px] sm:min-h-[32px] sm:min-w-[32px]"
             onClick={() => setShowStickerPicker(true)}
             title={dir === 'rtl' ? 'الملصقات' : 'Stickers'}
             style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
           >
-            <Sticker className="w-5 h-5 sm:w-4 sm:h-4 text-muted-foreground" />
+            <Sticker className="w-4 h-4 sm:w-4 sm:h-4 md:w-5 md:h-5 text-muted-foreground" />
           </Button>
 
           <div className="relative" ref={attachmentMenuRef}>
@@ -322,12 +324,12 @@ export function MessageInput({
               type="button" 
               size="sm" 
               variant="ghost" 
-              className="h-10 w-10 sm:h-8 sm:w-8 p-0 rounded-full hover:bg-accent touch-manipulation"
+              className="h-9 w-9 sm:h-8 sm:w-8 md:h-9 md:w-9 p-0 rounded-full hover:bg-accent touch-manipulation flex-shrink-0 min-h-[36px] min-w-[36px] sm:min-h-[32px] sm:min-w-[32px]"
               onClick={() => setShowAttachmentMenu(!showAttachmentMenu)}
               title={dir === 'rtl' ? 'المرفقات' : 'Attachments'}
               style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
             >
-              <Paperclip className="w-5 h-5 sm:w-4 sm:h-4 text-muted-foreground" />
+              <Paperclip className="w-4 h-4 sm:w-4 sm:h-4 md:w-5 md:h-5 text-muted-foreground" />
             </Button>
             {showAttachmentMenu && (
               <AttachmentMenu 
@@ -375,7 +377,7 @@ export function MessageInput({
           type="button"
           onClick={() => handleSend()}
           size="icon"
-          className="rounded-full h-11 w-11 sm:h-10 sm:w-10 shadow-lg button-transition hover:scale-110 active:scale-95 flex-shrink-0 touch-manipulation min-h-[44px] min-w-[44px]"
+          className="rounded-full h-9 w-9 sm:h-8 sm:w-8 md:h-10 md:w-10 shadow-lg button-transition hover:scale-110 active:scale-95 flex-shrink-0 touch-manipulation min-h-[36px] min-w-[36px] sm:min-h-[32px] sm:min-w-[32px] md:min-h-[40px] md:min-w-[40px]"
           style={{
             background: `linear-gradient(to right, hsl(var(--chat-from)), hsl(var(--chat-to)))`,
             WebkitTapHighlightColor: 'transparent',
@@ -383,7 +385,7 @@ export function MessageInput({
           }}
           disabled={!message.trim()}
         >
-          <Send className="w-5 h-5 sm:w-4 sm:h-4" />
+          <Send className="w-4 h-4 sm:w-4 sm:h-4 md:w-5 md:h-5" />
         </Button>
       </div>
 

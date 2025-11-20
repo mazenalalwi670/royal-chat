@@ -37,37 +37,42 @@ export function VoiceChatBar({
 
   return (
     <Card className="border-b rounded-none bg-gradient-to-r from-primary/5 via-background to-primary/5 animate-slide-in-down" dir={dir}>
-      <div className="p-4">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Users className="w-5 h-5 text-primary animate-pulse" />
-              <div className="absolute -inset-1 bg-primary/20 rounded-full blur animate-pulse" />
+      <div className="p-2 sm:p-3 md:p-4">
+        {/* Header - Mobile responsive for 1080x2340 */}
+        <div className="flex items-center justify-between mb-2 sm:mb-3 md:mb-4 gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
+            <div className="relative flex-shrink-0">
+              <Users className="w-4 h-4 sm:w-4 sm:h-4 md:w-5 md:h-5 text-primary animate-pulse" />
+              <div className="absolute -inset-0.5 sm:-inset-1 bg-primary/20 rounded-full blur animate-pulse" />
             </div>
-            <span className="font-semibold text-sm animate-gradient" style={{ color: `hsl(var(--primary))` }}>
+            <span className="font-semibold text-xs sm:text-xs md:text-sm animate-gradient truncate" style={{ color: `hsl(var(--primary))` }}>
               {dir === 'rtl' ? 'التحدث الصوتي' : 'Voice Chat'}
             </span>
-            <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 animate-fade-in-scale">
+            <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 animate-fade-in-scale text-[9px] sm:text-[10px] md:text-xs px-1 sm:px-1.5 md:px-2 py-0.5 min-h-[18px] sm:min-h-[20px] flex-shrink-0">
               {participants.length} {dir === 'rtl' ? 'مشارك' : 'participants'}
             </Badge>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2 flex-shrink-0">
             <Button
               type="button"
               size="sm"
               variant={isMuted ? 'destructive' : 'default'}
               onClick={onToggleMute}
               className={cn(
-                'rounded-full transition-all duration-300 hover:scale-110',
+                'rounded-full transition-all duration-300 hover:scale-110 active:scale-95 h-8 sm:h-7 md:h-8 w-8 sm:w-7 md:w-8 min-h-[36px] sm:min-h-[28px] md:min-h-[32px] min-w-[36px] sm:min-w-[28px] md:min-w-[32px] touch-manipulation',
                 isMuted ? 'bg-red-500 hover:bg-red-600 shadow-lg' : 'bg-primary hover:bg-primary/90 shadow-lg'
               )}
               style={!isMuted ? {
-                background: `linear-gradient(135deg, hsl(var(--chat-from)), hsl(var(--chat-to)))`
-              } : undefined}
+                background: `linear-gradient(135deg, hsl(var(--chat-from)), hsl(var(--chat-to)))`,
+                WebkitTapHighlightColor: 'transparent',
+                touchAction: 'manipulation'
+              } : {
+                WebkitTapHighlightColor: 'transparent',
+                touchAction: 'manipulation'
+              }}
               title={isMuted ? (dir === 'rtl' ? 'فك كتم الصوت' : 'Unmute') : (dir === 'rtl' ? 'كتم الصوت' : 'Mute')}
             >
-              {isMuted ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+              {isMuted ? <MicOff className="w-3.5 h-3.5 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4" /> : <Mic className="w-3.5 h-3.5 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4" />}
             </Button>
             <Button
               type="button"
@@ -75,12 +80,13 @@ export function VoiceChatBar({
               variant={isDeafened ? 'destructive' : 'outline'}
               onClick={onToggleDeafen}
               className={cn(
-                'rounded-full transition-all duration-300 hover:scale-110',
+                'rounded-full transition-all duration-300 hover:scale-110 active:scale-95 h-8 sm:h-7 md:h-8 w-8 sm:w-7 md:w-8 min-h-[36px] sm:min-h-[28px] md:min-h-[32px] min-w-[36px] sm:min-w-[28px] md:min-w-[32px] touch-manipulation',
                 isDeafened && 'bg-red-500 hover:bg-red-600 border-red-500 shadow-lg'
               )}
+              style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
               title={isDeafened ? (dir === 'rtl' ? 'فك كتم الصوت' : 'Undeafen') : (dir === 'rtl' ? 'كتم الصوت' : 'Deafen')}
             >
-              {isDeafened ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+              {isDeafened ? <VolumeX className="w-3.5 h-3.5 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4" /> : <Volume2 className="w-3.5 h-3.5 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4" />}
             </Button>
           </div>
         </div>
