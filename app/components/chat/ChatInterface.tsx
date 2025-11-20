@@ -36,6 +36,7 @@ export function ChatInterface({
 }: ChatInterfaceProps) {
   const { socket } = useWebSocket();
   const { dir } = useLanguage();
+  const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (!socket) return;
@@ -186,9 +187,25 @@ export function ChatInterface({
       }
     };
 
+    // Listen for typing indicator
+    const handleUserTyping = (data: { userId: string; userName?: string; isTyping: boolean }) => {
+      if (data.userId === currentUser.id) return; // Don't show own typing indicator
+      
+      setTypingUsers(prev => {
+        const newSet = new Set(prev);
+        if (data.isTyping) {
+          newSet.add(data.userId);
+        } else {
+          newSet.delete(data.userId);
+        }
+        return newSet;
+      });
+    };
+
     // Listen for new messages
     socket.on('receive_message', handleReceiveMessage);
     socket.on('conversation_history', handleConversationHistory); // Receive conversation history (real-time sync)
+    socket.on('user_typing', handleUserTyping); // Listen for typing indicator
     
     // Listen for message reactions
     socket.on('message_reaction', handleMessageReaction);
@@ -196,10 +213,11 @@ export function ChatInterface({
     return () => {
       socket.off('receive_message', handleReceiveMessage);
       socket.off('conversation_history', handleConversationHistory);
+      socket.off('user_typing', handleUserTyping);
       socket.off('message_reaction', handleMessageReaction);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socket, conversation.id]);
+  }, [socket, conversation.id, currentUser.id]);
 
   interface AttachmentData {
     type: 'image' | 'file' | 'voice' | 'location';
@@ -442,6 +460,30 @@ export function ChatInterface({
             );
           })}
           <div ref={scrollRef} />
+          
+          {/* Typing Indicator */}
+          {typingUsers.size > 0 && (
+            <div className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground animate-pulse">
+              <div className="flex gap-1">
+                <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+              </div>
+              <span>
+                {Array.from(typingUsers).map((userId, index) => {
+                  const typingUser = (conversation.participants as any[])?.find((p: any) => {
+                    const id = typeof p === 'string' ? p : p.id;
+                    return id === userId;
+                  });
+                  const userName = typeof typingUser === 'string' 
+                    ? typingUser 
+                    : typingUser?.name || 'Someone';
+                  return index === 0 ? userName : `, ${userName}`;
+                }).join('')}
+                {dir === 'rtl' ? ' يكتب...' : ' is typing...'}
+              </span>
+            </div>
+          )}
         </div>
       </ScrollArea>
 
@@ -451,6 +493,8 @@ export function ChatInterface({
         onCancelReply={() => setReplyingTo(undefined)}
         editingMessage={editingMessage}
         onCancelEdit={() => setEditingMessage(undefined)}
+        conversationId={conversation.id}
+        currentUserId={currentUser.id}
       />
     </Card>
   );

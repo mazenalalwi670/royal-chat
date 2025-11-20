@@ -11,6 +11,7 @@ import {
 import { Send, Smile, Paperclip, X, Sticker } from 'lucide-react';
 import { Message } from '@/types/chat';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useWebSocket } from '@/contexts/WebSocketContext';
 import { StickerPicker } from '@/components/stickers/StickerPicker';
 import { AttachmentMenu } from './components/chat/AttachmentMenu';
 import { VoiceRecorder } from './components/chat/VoiceRecorder';
@@ -34,6 +35,8 @@ interface MessageInputProps {
   onCancelReply: () => void;
   editingMessage?: Message;
   onCancelEdit: () => void;
+  conversationId?: string;
+  currentUserId?: string;
 }
 
 const EMOJI_LIST = ['😀', '😂', '😍', '🥳', '😎', '🤔', '👍', '❤️', '🔥', '✨', '🎉', '💯'];
@@ -43,9 +46,12 @@ export function MessageInput({
   replyingTo,
   onCancelReply,
   editingMessage,
-  onCancelEdit
+  onCancelEdit,
+  conversationId,
+  currentUserId
 }: MessageInputProps) {
   const { t, dir } = useLanguage();
+  const { socket } = useWebSocket();
   const [message, setMessage] = useState(editingMessage?.content || '');
   const [showStickerPicker, setShowStickerPicker] = useState(false);
   const [showAttachmentMenu, setShowAttachmentMenu] = useState(false);
@@ -54,21 +60,66 @@ export function MessageInput({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const documentInputRef = useRef<HTMLInputElement>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isTypingRef = useRef(false);
+
+  // Send typing indicator
+  const sendTypingIndicator = useCallback((isTyping: boolean) => {
+    if (!socket || !conversationId || !currentUserId || isTypingRef.current === isTyping) return;
+    
+    isTypingRef.current = isTyping;
+    socket.emit('typing', {
+      conversationId,
+      userId: currentUserId,
+      isTyping
+    });
+  }, [socket, conversationId, currentUserId]);
+
+  // Handle typing with debounce
+  const handleTyping = useCallback(() => {
+    // Clear existing timeout
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    // Send typing indicator
+    sendTypingIndicator(true);
+
+    // Set timeout to stop typing after 3 seconds of inactivity
+    typingTimeoutRef.current = setTimeout(() => {
+      sendTypingIndicator(false);
+    }, 3000);
+  }, [sendTypingIndicator]);
 
   const handleSend = useCallback((attachments?: AttachmentData[]) => {
     if (message.trim() || attachments?.length) {
+      // Stop typing indicator
+      sendTypingIndicator(false);
+      
       onSend(message, attachments);
       setMessage('');
       inputRef.current?.focus();
     }
-  }, [message, onSend]);
+  }, [message, onSend, sendTypingIndicator]);
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();
+    } else {
+      handleTyping();
     }
   };
+
+  // Cleanup typing indicator on unmount
+  useEffect(() => {
+    return () => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+      sendTypingIndicator(false);
+    };
+  }, [sendTypingIndicator]);
 
   const handleStickerSelect = (sticker: string) => {
     setMessage(prev => prev + sticker);
@@ -300,7 +351,10 @@ export function MessageInput({
             ref={inputRef}
             placeholder={t('chat.sendMessage')}
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={(e) => {
+              setMessage(e.target.value);
+              handleTyping();
+            }}
             onKeyDown={handleKeyPress}
             className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 px-0 text-xs sm:text-sm md:text-base min-w-0 flex-1 min-h-[36px] sm:min-h-[32px] md:min-h-[36px] touch-manipulation"
             dir={dir}
@@ -399,3 +453,4 @@ export function MessageInput({
     </div>
   );
 }
+

@@ -10,7 +10,6 @@ const SettingsPage = dynamic(() => import('./settings/SettingsPage').then(mod =>
 const SelectConversationMessage = dynamic(() => import('./components/chat/SelectConversationMessage').then(mod => ({ default: mod.SelectConversationMessage })), { ssr: false });
 const ContactsPage = dynamic(() => import('./components/ContactsPage').then(mod => ({ default: mod.ContactsPage })), { ssr: false });
 const PremiumChatPage = dynamic(() => import('./components/premium/PremiumChatPage').then(mod => ({ default: mod.PremiumChatPage })), { ssr: false });
-import { currentUser as initialUserRaw, mockConversations, mockMessages } from '../data/mockData';
 import { 
   Message, 
   User, 
@@ -27,7 +26,7 @@ import { useWebSocket } from './contexts/WebSocketContext';
 import { useLanguage } from './contexts/LanguageContext';
 import { NotificationService } from './services/NotificationService';
 
-// Initial data will be converted as needed
+// Real data from WebSocket/Database - No mock data
 
 function App() {
   const { user: loggedInUser, updateUser: updateLoggedInUser } = useUser();
@@ -35,28 +34,11 @@ function App() {
   const [activeTab, setActiveTab] = useState<'chats' | 'contacts' | 'settings' | 'premium'>('chats');
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
-  const [conversations, setConversations] = useState<Conversation[]>(
-    mockConversations.map(conv => toConversation(conv))
-  );
+  // Start with empty conversations - will be loaded from WebSocket/Database
+  const [conversations, setConversations] = useState<Conversation[]>([]);
   
-  const [messages, setMessages] = useState<Message[]>(
-    mockMessages.map(msg => {
-      // Convert the mock message to our internal format
-      const originalMessage = msg as unknown as OriginalMessage;
-      return {
-        ...originalMessage,
-        status: originalMessage.status || 'sent',
-        replyTo: originalMessage.replyTo || null,
-        reactions: (originalMessage.reactions || []).map(r => ({
-          emoji: r.emoji,
-          userIds: [r.userId],
-          userNames: [r.userName || r.userId]
-        })),
-        edited: false,
-        attachments: []
-      };
-    })
-  );
+  // Start with empty messages - will be loaded from WebSocket/Database
+  const [messages, setMessages] = useState<Message[]>([]);
   
   // Royal Crown Icon - Default avatar helper
   const getRoyalCrownIcon = (): string => {
@@ -92,9 +74,9 @@ function App() {
     `)}`;
   };
 
-  // Use logged in user if available, otherwise use mock user
+  // Use logged in user - Real user from authentication
   // MANDATORY: Force Royal Crown icon for all users (can be changed in settings)
-  const initialUser = loggedInUser ? {
+  const initialUser: User | null = loggedInUser ? {
     id: loggedInUser.id,
     name: loggedInUser.name,
     avatar: loggedInUser.avatar && loggedInUser.avatar.includes('data:image/svg+xml') 
@@ -102,9 +84,9 @@ function App() {
       : getRoyalCrownIcon(), // Force Royal Crown if not already set
     status: 'online' as const,
     lastSeen: new Date()
-  } : toUser(initialUserRaw);
+  } : null;
   
-  const [currentUser, setCurrentUser] = useState<User>(initialUser);
+  const [currentUser, setCurrentUser] = useState<User | null>(initialUser);
 
   // Sync with logged in user when it changes
   useEffect(() => {
@@ -131,9 +113,29 @@ function App() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // Load conversations from WebSocket when connected
+  useEffect(() => {
+    if (!socket || !currentUser) return;
+
+    // Request conversations from server
+    socket.emit('get_conversations', { userId: currentUser.id });
+
+    // Listen for conversations list
+    const handleConversationsList = (conversationsList: any[]) => {
+      const convertedConversations = conversationsList.map(conv => toConversation(conv));
+      setConversations(convertedConversations);
+    };
+
+    socket.on('conversations_list', handleConversationsList);
+
+    return () => {
+      socket.off('conversations_list', handleConversationsList);
+    };
+  }, [socket, currentUser]);
+
   // Listen for messages from all conversations for notifications
   useEffect(() => {
-    if (!socket) return;
+    if (!socket || !currentUser) return;
 
     const handleGlobalMessage = (message: any) => {
       // Only show notification if message is from another user
@@ -193,7 +195,7 @@ function App() {
   const conversationMessages = selectedConversationId ? messages.filter(m => m.conversationId === selectedConversationId) : [];
 
   const handleSendMessage = (message: string | Omit<Message, 'id' | 'timestamp' | 'status'>) => {
-    if (!selectedConversationId) return;
+    if (!selectedConversationId || !currentUser) return;
     // Ensure we have a valid message object
     const newMessage = createMessage(
       typeof message === 'string' ? message : message.content,
@@ -260,6 +262,7 @@ function App() {
   };
 
   const handleReactToMessage = (messageId: string, emoji: string) => {
+    if (!currentUser) return;
     setMessages((prevMessages: Message[]) => 
       prevMessages.map((msg: Message) => {
         if (msg.id !== messageId) return msg;
@@ -359,6 +362,11 @@ function App() {
   const handleBackToConversations = () => {
     setSelectedConversationId(null);
   };
+
+  // Don't render if user is not logged in
+  if (!currentUser) {
+    return null;
+  }
 
   return (
     <div className="flex h-[100dvh] bg-background overflow-hidden w-full max-w-full touch-pan-y">

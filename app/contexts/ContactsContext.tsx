@@ -467,7 +467,7 @@ export function ContactsProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('royal_chat_phone_contacts', JSON.stringify(updated));
   };
 
-  // Process phone contacts and match with registered users
+  // Process phone contacts and match with registered users using real API
   const processPhoneContacts = async (phoneContactsData: PhoneContact[]) => {
     if (!phoneContactsData || phoneContactsData.length === 0) return;
 
@@ -476,12 +476,14 @@ export function ContactsProvider({ children }: { children: ReactNode }) {
       JSON.parse(localStorage.getItem('royal_chat_invited_numbers') || '[]')
     );
 
+    // Collect all unique phone numbers
+    const allPhoneNumbers: string[] = [];
+    const phoneNumberToContact = new Map<string, PhoneContact>();
+
     for (const phoneContact of phoneContactsData) {
-      // Normalize phone number
       const phoneNumbers = phoneContact.phoneNumbers || [phoneContact.phoneNumber];
       
       for (const phoneNumber of phoneNumbers) {
-        // Clean phone number (remove spaces, dashes, etc.)
         const cleanNumber = phoneNumber.replace(/[\s\-\(\)]/g, '');
         
         // Skip if it's the current user's number
@@ -489,18 +491,90 @@ export function ContactsProvider({ children }: { children: ReactNode }) {
           continue;
         }
 
-        // Check if user is registered
+        if (!allPhoneNumbers.includes(cleanNumber)) {
+          allPhoneNumbers.push(cleanNumber);
+          phoneNumberToContact.set(cleanNumber, phoneContact);
+        }
+      }
+    }
+
+    // Call real API to find registered users by phone numbers
+    try {
+      const response = await fetch('/api/users/find-by-phones', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phoneNumbers: allPhoneNumbers }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const registeredUsers = data.users || [];
+
+        // Create a map of phone number to registered user
+        const phoneToUserMap = new Map<string, Contact>();
+        registeredUsers.forEach((user: Contact) => {
+          const cleanPhone = user.phoneNumber.replace(/[\s\-\(\)]/g, '');
+          phoneToUserMap.set(cleanPhone, user);
+        });
+
+        // Build synced contacts list
+        for (const phoneNumber of allPhoneNumbers) {
+          const phoneContact = phoneNumberToContact.get(phoneNumber);
+          const registeredUser = phoneToUserMap.get(phoneNumber);
+
+          synced.push({
+            name: phoneContact?.name || phoneNumber,
+            phoneNumber: phoneNumber,
+            phoneNumbers: phoneContact?.phoneNumbers || [phoneNumber],
+            isRegistered: !!registeredUser,
+            registeredUser: registeredUser,
+            invited: invitedNumbers.has(phoneNumber)
+          });
+        }
+
+        // Update allUsers with found registered users
+        setAllUsers(prev => {
+          const existingIds = new Set(prev.map(u => u.id));
+          const newUsers = registeredUsers.filter((u: Contact) => !existingIds.has(u.id));
+          return [...prev, ...newUsers];
+        });
+      } else {
+        console.error('Failed to find users by phone numbers:', response.statusText);
+        // Fallback to local search
+        for (const phoneNumber of allPhoneNumbers) {
+          const phoneContact = phoneNumberToContact.get(phoneNumber);
+          const registeredUser = allUsers.find(u => 
+            u.phoneNumber.replace(/[\s\-\(\)]/g, '') === phoneNumber
+          );
+
+          synced.push({
+            name: phoneContact?.name || phoneNumber,
+            phoneNumber: phoneNumber,
+            phoneNumbers: phoneContact?.phoneNumbers || [phoneNumber],
+            isRegistered: !!registeredUser,
+            registeredUser: registeredUser,
+            invited: invitedNumbers.has(phoneNumber)
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error finding users by phone numbers:', error);
+      // Fallback to local search
+      for (const phoneNumber of allPhoneNumbers) {
+        const phoneContact = phoneNumberToContact.get(phoneNumber);
         const registeredUser = allUsers.find(u => 
-          u.phoneNumber.replace(/[\s\-\(\)]/g, '') === cleanNumber
+          u.phoneNumber.replace(/[\s\-\(\)]/g, '') === phoneNumber
         );
 
         synced.push({
-          name: phoneContact.name || cleanNumber,
-          phoneNumber: cleanNumber,
-          phoneNumbers: phoneNumbers,
+          name: phoneContact?.name || phoneNumber,
+          phoneNumber: phoneNumber,
+          phoneNumbers: phoneContact?.phoneNumbers || [phoneNumber],
           isRegistered: !!registeredUser,
           registeredUser: registeredUser,
-          invited: invitedNumbers.has(cleanNumber)
+          invited: invitedNumbers.has(phoneNumber)
         });
       }
     }
